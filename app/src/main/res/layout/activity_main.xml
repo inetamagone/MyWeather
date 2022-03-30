@@ -11,6 +11,34 @@
         android:layout_height="match_parent"
         android:visibility="visible"
         android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_city"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter City name"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/search_icon"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:src="@drawable/search" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/address_container"
@@ -26,7 +54,8 @@
                 android:layout_height="wrap_content"
                 android:text="Riga"
                 android:textColor="@color/black"
-                android:textSize="44sp" />
+                android:textSize="44sp"
+                android:layout_marginBottom="10dp" />
 
             <TextView
                 android:id="@+id/updated_time"
@@ -34,7 +63,8 @@
                 android:layout_height="wrap_content"
                 android:text="Last updated: 25 March 2022, 16:07"
                 android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:layout_marginBottom="10dp" />
 
             <ImageView
                 android:id="@+id/image_main"

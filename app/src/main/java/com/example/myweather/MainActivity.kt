@@ -9,17 +9,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
-import java.io.BufferedInputStream
 import java.io.IOException
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 
+private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
     private val API_Key = "91db09ff13832921fd93739ff0fcc890"
-    private val CITY = "Riga"
+    private var CITY = "Riga"
     val BASE_URL =
         "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_Key"
 
