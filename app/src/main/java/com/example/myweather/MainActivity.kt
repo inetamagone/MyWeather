@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         supportActionBar?.hide() // Hide statusBar
         setContentView(R.layout.activity_main)
         gettingWeather().execute()
@@ -92,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                 val address = jsonObj.getString("name") + ", " + sys.getString("country")
 
                 /* Populating extracted data into the views */
-                
+
 //                val image = findViewById<ImageView>(R.id.image_main)
 //                image.setImageBitmap(getImageBitmap(imageUrl))
 
