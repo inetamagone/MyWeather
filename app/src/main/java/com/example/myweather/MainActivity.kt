@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity() {
                 val sys = jsonObj.getJSONObject("sys")
                 val wind = jsonObj.getJSONObject("wind")
                 val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
-                val visibility = jsonObj.getInt("visibility")
 
                 val updatedAt: Long = jsonObj.getLong("dt")
                 val updatedAtText =
@@ -88,7 +87,6 @@ class MainActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.wind_data).text = "$windSpeed m/s"
                 findViewById<TextView>(R.id.humidity_data).text = "$humidity %"
                 findViewById<TextView>(R.id.pressure).text = "$pressure hPa"
-                findViewById<TextView>(R.id.visibility_data).text = "$visibility m"
 
                 Log.d(TAG, "onPostExecute Called")
             } catch (e: Exception) {
@@ -126,7 +124,6 @@ class MainActivity : AppCompatActivity() {
                 val sys = jsonObj.getJSONObject("sys")
                 val wind = jsonObj.getJSONObject("wind")
                 val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
-                val visibility = jsonObj.getInt("visibility")
 
                 val updatedAt: Long = jsonObj.getLong("dt")
                 val updatedAtText =
@@ -154,7 +151,6 @@ class MainActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.wind_data).text = "$windSpeed m/s"
                 findViewById<TextView>(R.id.humidity_data).text = "$humidity %"
                 findViewById<TextView>(R.id.pressure).text = "$pressure hPa"
-                findViewById<TextView>(R.id.visibility_data).text = "$visibility m"
 
                 Log.d(TAG, "onPostExecute Called")
             } catch (e: Exception) {
