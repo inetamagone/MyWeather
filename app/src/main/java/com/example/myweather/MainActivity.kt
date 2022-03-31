@@ -24,16 +24,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate Called")
+//        Log.d(TAG, "onCreate Called")
         supportActionBar?.hide() // Hide statusBar
         setContentView(R.layout.activity_main)
-        gettingWeather().execute()
-
-        val searchIcon = findViewById<ImageView>(R.id.search_icon)
-        searchIcon.setOnClickListener {
-            searchCity().execute()
-            Log.d(TAG, "Button clicked")
-        }
+//        gettingWeather().execute()
+//
+//        val searchIcon = findViewById<ImageView>(R.id.search_icon)
+//        searchIcon.setOnClickListener {
+//            searchCity().execute()
+//            Log.d(TAG, "Button clicked")
+//        }
     }
 
     inner class gettingWeather() : AsyncTask<String, Void, String>() {
