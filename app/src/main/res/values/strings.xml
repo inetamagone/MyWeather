@@ -2,4 +2,24 @@
     <string name="app_name">MyWeather</string>
     <string name="enter_city_name">Enter City name</string>
     <string name="next_days">See Next Days</string>
+    <string name="weather_in_city">Weather in %1$s</string>
+
+    <string name="weatherDate1">1 Avril 2022</string>
+    <string name="weatherDate2">2 Avril 2022</string>
+    <string name="weatherDate3">3 Avril 2022</string>
+    <string name="weatherDate4">4 Avril 2022</string>
+    <string name="weatherDate5">5 Avril 2022</string>
+
+    <string name="weatherTemp1">1°C</string>
+    <string name="weatherTemp2">2°C</string>
+    <string name="weatherTemp3">39,04°C</string>
+    <string name="weatherTemp4">4°C</string>
+    <string name="weatherTemp5">5°C</string>
+
+    <string name="weatherWind1">Wind: 1 km/h</string>
+    <string name="weatherWind2">Wind: 2 km/h</string>
+    <string name="weatherWind3">Wind: 38,85 km/h</string>
+    <string name="weatherWind4">Wind: 4 km/h</string>
+    <string name="weatherWind5">Wind: 5 km/h</string>
+
 </resources>
