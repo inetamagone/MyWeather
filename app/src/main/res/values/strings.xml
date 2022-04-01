@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">MyWeather</string>
     <string name="enter_city_name">Enter City name</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="next_days">See Next Days</string>
 </resources>

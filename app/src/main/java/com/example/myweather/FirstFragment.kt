@@ -1,59 +1,189 @@
 package com.example.myweather
 
+import android.annotation.SuppressLint
+import android.os.AsyncTask
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.navigation.Navigation
+import com.google.android.material.textfield.TextInputEditText
+import org.json.JSONObject
+import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val TAG = "FirstFragment"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [FirstFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+private val API_Key = "91db09ff13832921fd93739ff0fcc890"
+private var CITY = "Riga"
+val BASE_URL =
+    "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_Key"
+
 class FirstFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        gettingWeather().execute()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_first, container, false)
+        // Search function
+        val view = inflater.inflate(R.layout.fragment_first, container, false)
+        val searchIcon = view.findViewById<ImageView>(R.id.search_icon)
+        searchIcon.setOnClickListener {
+            searchCity().execute()
+            Log.d(TAG, "Search Button clicked")
+        }
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment FirstFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FirstFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    // Navigation to the SecondFragment
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val navController = Navigation.findNavController(view)
+
+        view.findViewById<Button>(R.id.button_next).setOnClickListener {
+            navController.navigate(R.id.action_firstFragment_to_secondFragment)
+        }
+    }
+
+    inner class gettingWeather() : AsyncTask<String, Void, String>() {
+
+        override fun doInBackground(vararg params: String?): String? {
+            var response: String?
+            try {
+                response = URL(BASE_URL).readText(
+                    Charsets.UTF_8
+                )
+            } catch (e: Exception) {
+                response = null
             }
+            return response
+        }
+
+        @SuppressLint("SetTextI18n")
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            try {
+                /* Extracting JSON from the API */
+                val jsonObj = JSONObject(result)
+                val main = jsonObj.getJSONObject("main")
+                val sys = jsonObj.getJSONObject("sys")
+                val wind = jsonObj.getJSONObject("wind")
+                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
+
+                val updatedAt: Long = jsonObj.getLong("dt")
+                val upDatedAtText =
+                    "Updated at: " + SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(
+                        Date(updatedAt * 1000)
+                    )
+                val temp = main.getString("temp") + "°C"
+                val tempMin = "Min Temp: " + main.getString("temp_min") + "°C"
+                val tempMax = "Max Temp: " + main.getString("temp_max") + "°C"
+                val pressure = main.getString("pressure")
+                val humidity = main.getString("humidity")
+
+                val windSpeed = wind.getString("speed")
+                val weatherDescription = weather.getString("description")
+                val address = jsonObj.getString("name") + ", " + sys.getString("country")
+
+                /* Populating extracted data into the views */
+                view?.findViewById<TextView>(R.id.city_name)?.text = address
+                view?.findViewById<TextView>(R.id.updated_time)?.text = upDatedAtText
+                view?.findViewById<TextView>(R.id.conditions)?.text = weatherDescription
+                view?.findViewById<TextView>(R.id.temperature)?.text = temp
+                view?.findViewById<TextView>(R.id.temp_min)?.text = tempMin
+                view?.findViewById<TextView>(R.id.temp_max)?.text = tempMax
+                view?.findViewById<TextView>(R.id.pressure)?.text = pressure
+                view?.findViewById<TextView>(R.id.wind_data)?.text = "$windSpeed m/s"
+                view?.findViewById<TextView>(R.id.humidity_data)?.text = "$humidity %"
+                view?.findViewById<TextView>(R.id.pressure)?.text = "$pressure hPa"
+                Log.d(TAG, "onPostExecute Called")
+            } catch (e: Exception) {
+                Log.d(TAG, "Exception: $e")
+            }
+        }
+    }
+
+    inner class searchCity() : AsyncTask<String, Void, String>() {
+
+        private var CITY = getCity()
+        val BASE_URL =
+            "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_Key"
+
+        override fun doInBackground(vararg params: String?): String? {
+            var response: String?
+            try {
+                response = URL(BASE_URL).readText(
+                    Charsets.UTF_8
+                )
+                Log.d(TAG, "doInBackground Called")
+            } catch (e: Exception) {
+                response = null
+            }
+            return response
+        }
+
+        @SuppressLint("StringFormatMatches", "StringFormatInvalid")
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            try {
+                /* Extracting JSON from the API */
+                val jsonObj = JSONObject(result)
+                val main = jsonObj.getJSONObject("main")
+                val sys = jsonObj.getJSONObject("sys")
+                val wind = jsonObj.getJSONObject("wind")
+                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
+
+                val updatedAt: Long = jsonObj.getLong("dt")
+                val upDatedAtText =
+                    "Updated at: " + SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(
+                        Date(updatedAt * 1000)
+                    )
+                val temp = main.getString("temp") + "°C"
+                val tempMin = "Min Temp: " + main.getString("temp_min") + "°C"
+                val tempMax = "Max Temp: " + main.getString("temp_max") + "°C"
+                val pressure = main.getString("pressure")
+                val humidity = main.getString("humidity")
+
+                val windSpeed = wind.getString("speed")
+                val weatherDescription = weather.getString("description")
+                val address = jsonObj.getString("name") + ", " + sys.getString("country")
+
+                /* Populating extracted data into the views */
+                view?.findViewById<TextView>(R.id.city_name)?.text = address
+                view?.findViewById<TextView>(R.id.updated_time)?.text = upDatedAtText
+                view?.findViewById<TextView>(R.id.conditions)?.text = weatherDescription
+                view?.findViewById<TextView>(R.id.temperature)?.text = temp
+                view?.findViewById<TextView>(R.id.temp_min)?.text = tempMin
+                view?.findViewById<TextView>(R.id.temp_max)?.text = tempMax
+                view?.findViewById<TextView>(R.id.pressure)?.text = pressure
+                view?.findViewById<TextView>(R.id.wind_data)?.text = "$windSpeed m/s"
+                view?.findViewById<TextView>(R.id.humidity_data)?.text = "$humidity %"
+                view?.findViewById<TextView>(R.id.pressure)?.text = "$pressure hPa"
+
+                Log.d(TAG, "onPostExecute Called")
+            } catch (e: Exception) {
+                Log.d(TAG, "Exception: $e")
+            }
+        }
+    }
+
+    fun getCity(): String {
+        val editCity = view?.findViewById<TextInputEditText>(R.id.edit_city)
+        CITY = editCity?.text.toString()
+        Log.v(TAG, "Change cityName: $CITY")
+        editCity?.setText("")
+        return CITY
     }
 }
