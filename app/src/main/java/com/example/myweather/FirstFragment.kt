@@ -19,17 +19,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 private const val TAG = "FirstFragment"
-
+// https://api.openweathermap.org/data/2.5/weather?q=Riga&units=metric&appid=91db09ff13832921fd93739ff0fcc890
 private val API_Key = "91db09ff13832921fd93739ff0fcc890"
 private var CITY = ""
 
 class FirstFragment : Fragment() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate called")
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -104,6 +102,7 @@ class FirstFragment : Fragment() {
                 val sys = jsonObj.getJSONObject("sys")
                 val wind = jsonObj.getJSONObject("wind")
                 val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
+                //val coord = jsonObj.getJSONArray("coord").getJSONObject(0)
 
                 val updatedAt: Long = jsonObj.getLong("dt")
                 val upDatedAtText =
@@ -119,6 +118,9 @@ class FirstFragment : Fragment() {
                 val windSpeed = wind.getString("speed")
                 val weatherDescription = weather.getString("description")
                 val address = jsonObj.getString("name") + ", " + sys.getString("country")
+                // For the API call in the SecondFragment
+//                val lat = coord.getString("lat")
+//                val lon = coord.getString("lon")
 
                 /* Populating extracted data into the views */
                 view?.findViewById<TextView>(R.id.city_name)?.text = address

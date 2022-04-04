@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.adapter.DateViewAdapter
 import com.example.myweather.data.Datasource
 
+private const val TAG = "SecondFragment"
+
 class SecondFragment : Fragment() {
 
     override fun onCreateView(
@@ -27,4 +29,6 @@ class SecondFragment : Fragment() {
 
         return view
     }
+
+
 }

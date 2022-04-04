@@ -1,6 +1,6 @@
 package com.example.myweather.data
 
-import com.example.myweather.R
+import com.example.myweather.*
 import com.example.myweather.model.DateWeather
 
 class Datasource {
@@ -19,4 +19,5 @@ class Datasource {
             DateWeather(R.string.weatherDate5, R.string.weatherTemp5, R.string.weatherWind5, R.drawable.wind)
         )
     }
+
 }
