@@ -3,38 +3,42 @@ package com.example.myweather.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.R
 import com.example.myweather.SecondFragment
 import com.example.myweather.model.DateWeather
+import com.example.myweather.viewModels.DateViewModel
 
-class DateViewAdapter(private val context: SecondFragment, private val dataset: List<DateWeather>) :
-RecyclerView.Adapter<DateViewAdapter.DateViewHolder>() {
+class DateViewAdapter(
+    private val viewModel: DateViewModel,
+    private val context: SecondFragment,
+    private val arrayList: ArrayList<DateWeather>
+) :
+    RecyclerView.Adapter<DateViewAdapter.DateViewHolder>() {
 
-    class DateViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val dateView: TextView = view.findViewById(R.id.date_text)
-        val tempView: TextView = view.findViewById(R.id.date_temp)
-        val windView: TextView = view.findViewById(R.id.date_wind)
-        val iconView: ImageView = view.findViewById(R.id.date_icon)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DateViewHolder {
-        val adapterLayout = LayoutInflater.from(parent.context)
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int): DateViewAdapter.DateViewHolder {
+        var root = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_item, parent, false)
-        return DateViewHolder(adapterLayout)
+        return DateViewHolder(root)
     }
 
-    override fun onBindViewHolder(holder: DateViewHolder, position: Int) {
-        val item = dataset[position]
-        holder.dateView.text = context.resources.getString(item.dateResourceId)
-        holder.tempView.text = context.resources.getString(item.temperatureResourceId)
-        holder.windView.text = context.resources.getString(item.windResourceId)
-        holder.iconView.setImageResource(item.icon_imgResourceId)
+    override fun onBindViewHolder(holder: DateViewAdapter.DateViewHolder, position: Int) {
+        holder.bind(arrayList.get(position))
     }
 
     override fun getItemCount(): Int {
-        return dataset.size
+        return arrayList.size
+    }
+
+    inner class DateViewHolder(private val binding: View) : RecyclerView.ViewHolder(binding) {
+        fun bind(dateWeather: DateWeather) {
+            binding.findViewById<TextView>(R.id.date_text).text = dateWeather.dateText
+            binding.findViewById<TextView>(R.id.date_temp).text = dateWeather.temperature
+            binding.findViewById<TextView>(R.id.date_wind).text = dateWeather.windSpeed
+            //binding.findViewById<ImageView>(R.id.date_icon).setImageResource()
+        }
     }
 }

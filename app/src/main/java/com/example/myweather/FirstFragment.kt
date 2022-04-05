@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.Navigation
+import com.example.myweather.utils.API_Key
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONObject
 import java.net.URL
@@ -20,7 +21,6 @@ import java.util.*
 
 private const val TAG = "FirstFragment"
 // https://api.openweathermap.org/data/2.5/weather?q=Riga&units=metric&appid=91db09ff13832921fd93739ff0fcc890
-private val API_Key = "91db09ff13832921fd93739ff0fcc890"
 private var CITY = ""
 
 class FirstFragment : Fragment() {
@@ -76,13 +76,12 @@ class FirstFragment : Fragment() {
     inner class getWeather() : AsyncTask<String, Void, String>() {
 
         private var CITY = getCity()
-        val BASE_URL =
+        val BASE_URL_FIRST =
             "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_Key"
-
         override fun doInBackground(vararg params: String?): String? {
             var response: String?
             try {
-                response = URL(BASE_URL).readText(
+                response = URL(BASE_URL_FIRST).readText(
                     Charsets.UTF_8
                 )
                 Log.d(TAG, "doInBackground Called")
