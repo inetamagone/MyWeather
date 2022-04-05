@@ -12,4 +12,5 @@ class DateViewModel: ViewModel() {
         newList.add(dateWeather)
         list.value = newList
     }
+
 }

@@ -66,12 +66,11 @@
                 android:layout_height="wrap_content"
                 android:text="Last updated: 25 March 2022, 16:07"
                 android:textColor="@color/black"
-                android:textSize="14sp"
-                android:layout_marginBottom="5dp" />
+                android:textSize="14sp" />
 
             <ImageView
                 android:id="@+id/image_main"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:src="@drawable/sun" />

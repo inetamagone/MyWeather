@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.adapter.DateViewAdapter
@@ -23,7 +25,6 @@ import org.json.JSONObject
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 private const val TAG = "SecondFragment"
 
@@ -40,8 +41,9 @@ class SecondFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_second, container, false)
 
+        val cityString = requireArguments().getString("cityName")
         val viewTitle = view.findViewById<TextView>(R.id.title_text)
-        viewTitle.text = resources.getString(R.string.weather_in_city, "Riga")
+        viewTitle.text = resources.getString(R.string.weather_in_city, cityString)
 
         dateRecycler = view.findViewById(R.id.recycler_view)
         //dateRecycler.adapter = DateViewAdapter(viewModel, this, arrayList)
@@ -51,7 +53,7 @@ class SecondFragment : Fragment() {
 
         initialiseAdapter()
         getWeatherByDate().execute()
-        dateRecycler.adapter?.notifyDataSetChanged()
+        //dateRecycler.adapter?.notifyDataSetChanged()
 
         return view
     }
@@ -70,19 +72,20 @@ class SecondFragment : Fragment() {
 //        })
     }
 
-    class getWeatherByDate() : AsyncTask<String, Void, String>() {
+    inner class getWeatherByDate() : AsyncTask<String, Void, String>() {
 
-        val BASE_URL_SECOND =
-            "api.openweathermap.org/data/2.5/forecast?lat=$LAT&lon=$LON&appid=$API_Key"
-
+        var BASE_URL_SECOND =
+            "https://api.openweathermap.org/data/2.5/forecast?lat=$LAT&lon=$LON&units=metric&appid=$API_Key"
+            // https://api.openweathermap.org/data/2.5/forecast?lat=57&lon=24.0833&units=metric&appid=91db09ff13832921fd93739ff0fcc890
         override fun doInBackground(vararg params: String?): String? {
             var response: String?
             try {
                 response = URL(BASE_URL_SECOND).readText(
                     Charsets.UTF_8
                 )
-                Log.d(TAG, "doInBackground Called")
+                Log.d(TAG, "doInBackground Called, $response")
             } catch (e: Exception) {
+                Log.d(TAG, "doInBackground Catch Exception: $e")
                 response = null
             }
             return response
@@ -93,17 +96,18 @@ class SecondFragment : Fragment() {
             try {
                 /* Extracting JSON from the API */
                 val jsonObj = JSONObject(result)
-                val main = jsonObj.getJSONObject("main")
-                val wind = jsonObj.getJSONObject("wind")
-                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
-                val dateText: Long = jsonObj.getLong("dt")
+                val list = jsonObj.getJSONArray("list").getJSONObject(0)
+                val main = list.getJSONObject("main")
+                val weather = list.getJSONArray("weather").getJSONObject(0)
+                val wind = list.getJSONObject("wind")
+                val dateText: Long = list.getLong("dt")
 
-                val dateTextFormatted = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(
+                val dateTextFormatted = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).format(
                     Date(dateText * 1000)
                 )
                 val temp = main.getString("temp") + "°C"
-                val windSpeed = wind.getString("speed")
                 val iconId = weather.getString("icon")
+                val windSpeed = wind.getString("speed")
 
                 var dateWeatherData = DateWeather(dateTextFormatted, temp, windSpeed, iconId)
                 val viewModel = DateViewModel()
@@ -111,7 +115,10 @@ class SecondFragment : Fragment() {
 
                 //dateRecycler.adapter?.notifyDataSetChanged()
 
-                Log.d(TAG, "jsonObj: $jsonObj")
+                Log.d(TAG, "date: $dateTextFormatted")
+                Log.d(TAG, "temp: $temp")
+                Log.d(TAG, "iconId: $iconId")
+                Log.d(TAG, "windSpeed: $windSpeed")
             } catch (e: Exception) {
                 Log.d(TAG, "Exception onPostExecute: $e")
             }

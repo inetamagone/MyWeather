@@ -1,33 +1,44 @@
 package com.example.myweather
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
 import com.example.myweather.utils.API_Key
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONObject
+import java.io.BufferedInputStream
+import java.io.IOException
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 
 private const val TAG = "FirstFragment"
+
 // https://api.openweathermap.org/data/2.5/weather?q=Riga&units=metric&appid=91db09ff13832921fd93739ff0fcc890
 private var CITY = ""
+private var lat = ""
+private var lon = ""
 
 class FirstFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate called")
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,42 +64,66 @@ class FirstFragment : Fragment() {
 
         view.findViewById<Button>(R.id.button_next).setOnClickListener {
             Log.d(TAG, "Button clicked to navigate to the SecondFragment")
-            navController.navigate(R.id.action_firstFragment_to_secondFragment)
+            val cityString = view?.findViewById<TextView>(R.id.city_name).text.toString()
+
+            navController.navigate(R.id.action_firstFragment_to_secondFragment, Bundle().apply {
+                putString("cityName", cityString)
+            })
         }
     }
 
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//        Log.d(TAG, "Saved Instance State")
-//        val cityString = view?.findViewById<TextView>(R.id.city_name)?.text
-//        outState.putCharSequence("Saved city", cityString)
-//        Log.d(TAG, "Saved city $cityString")
-//    }
-//     /* On rotation onCreateView() calls twice, the first time CITY is stored but on the second time is null and displays null */
-//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-//        super.onViewStateRestored(savedInstanceState)
-//        Log.d(TAG, "View State Restored")
-//        var storedCity = savedInstanceState?.getCharSequence("Saved city")
-//        CITY = storedCity.toString()
-//        Log.d(TAG, "Restored city $storedCity")
-//    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d(TAG, "Saved Instance State")
+        val cityString = view?.findViewById<TextView>(R.id.city_name)?.text
+        outState.putCharSequence("Saved city", cityString)
+        Log.d(TAG, "Saved city $cityString")
+    }
+     /* On rotation onCreateView() calls twice, the first time CITY is stored but on the second time is null and displays null */
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        Log.d(TAG, "View State Restored")
+        var storedCity = savedInstanceState?.getCharSequence("Saved city")
+        CITY = storedCity.toString()
+        Log.d(TAG, "Restored city $storedCity")
+    }
 
     inner class getWeather() : AsyncTask<String, Void, String>() {
 
         private var CITY = getCity()
         val BASE_URL_FIRST =
             "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_Key"
+
         override fun doInBackground(vararg params: String?): String? {
             var response: String?
             try {
                 response = URL(BASE_URL_FIRST).readText(
                     Charsets.UTF_8
                 )
-                Log.d(TAG, "doInBackground Called")
+                Log.d(TAG, "doInBackground Called, $response")
             } catch (e: Exception) {
+                Log.d(TAG, "doInBackground Catch Exception: $e")
                 response = null
             }
             return response
+        }
+
+        // Picture icon
+        private fun getImageBitmap(url: String): Bitmap? {
+            var bm: Bitmap? = null
+            try {
+                val aURL = URL(url)
+                val conn = aURL.openConnection()
+                conn.connect()
+                val `is` = conn.getInputStream()
+                val bis = BufferedInputStream(`is`)
+                bm = BitmapFactory.decodeStream(bis)
+                bis.close()
+                `is`.close()
+            } catch (e: IOException) {
+                Log.d(TAG,"Error getting bitmap: $e")
+            }
+            return bm
         }
 
         @SuppressLint("StringFormatMatches", "StringFormatInvalid")
@@ -100,8 +135,8 @@ class FirstFragment : Fragment() {
                 val main = jsonObj.getJSONObject("main")
                 val sys = jsonObj.getJSONObject("sys")
                 val wind = jsonObj.getJSONObject("wind")
+                val coord = jsonObj.getJSONObject("coord")
                 val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
-                //val coord = jsonObj.getJSONArray("coord").getJSONObject(0)
 
                 val updatedAt: Long = jsonObj.getLong("dt")
                 val upDatedAtText =
@@ -117,9 +152,14 @@ class FirstFragment : Fragment() {
                 val windSpeed = wind.getString("speed")
                 val weatherDescription = weather.getString("description")
                 val address = jsonObj.getString("name") + ", " + sys.getString("country")
+
+                val icon = weather.getString("icon")
+                val imageUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
+                // http://openweathermap.org/img/wn/04d@2x.png
+
                 // For the API call in the SecondFragment
-//                val lat = coord.getString("lat")
-//                val lon = coord.getString("lon")
+                val lat = coord.getString("lat")
+                val lon = coord.getString("lon")
 
                 /* Populating extracted data into the views */
                 view?.findViewById<TextView>(R.id.city_name)?.text = address
@@ -133,6 +173,32 @@ class FirstFragment : Fragment() {
                 view?.findViewById<TextView>(R.id.humidity_data)?.text = "$humidity %"
                 view?.findViewById<TextView>(R.id.pressure)?.text = "$pressure hPa"
 
+                // Image
+                // android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
+                val thread = Thread {
+                    try {
+                        val image = view?.findViewById<ImageView>(R.id.image_main)
+                        image?.setImageBitmap(getImageBitmap(imageUrl))
+                    } catch (e: Exception) {
+                        Log.d(TAG, "Exception: $e")
+                    }
+                }
+                thread.start()
+
+                // Send address, lon, lat to the SecondFragment
+//                val bundle = Bundle()
+//                bundle.putString("city", address)  // Key, value
+//                val secondFragment = SecondFragment()
+//                secondFragment.arguments = bundle
+//                fragmentManager?.beginTransaction()?.replace(R.id.fragmentContainerView, secondFragment)?.commit()
+
+            // Pass data to the secondFragment
+//                val secondFragment = SecondFragment()
+//                secondFragment.setArguments(bundle)
+//                val fragmentManager = getActivity()?.getSupportFragmentManager()
+//                fragmentManager?.beginTransaction()?.replace(R.id.content, secondFragment)?.commit()
+
+                Log.d(TAG, "For the SecondFragment: $lat, $lon")
                 Log.d(TAG, "onPostExecute Called")
             } catch (e: Exception) {
                 Log.d(TAG, "Exception: $e")

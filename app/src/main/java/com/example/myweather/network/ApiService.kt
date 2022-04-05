@@ -7,8 +7,8 @@ import java.net.URL
 
 private const val TAG = "ApiService"
 //private val API_Key = "91db09ff13832921fd93739ff0fcc890"
-//var LAT = "57"
-//var LON = "24.0833"
+//const val LAT = "57"
+//const val LON = "24.0833"
 
 interface ApiService {
 
