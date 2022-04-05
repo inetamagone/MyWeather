@@ -25,5 +25,11 @@
             android:name="cityName"
             app:argType="string"
             android:defaultValue="Riga" />
+        <argument
+            android:name="latString"
+            app:argType="string" />
+        <argument
+            android:name="lonString"
+            app:argType="string" />
     </fragment>
 </navigation>

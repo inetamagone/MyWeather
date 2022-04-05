@@ -1,8 +1,5 @@
 package com.example.myweather.utils
 
+const val API_KEY: String = "91db09ff13832921fd93739ff0fcc890"
 
-val API_Key = "91db09ff13832921fd93739ff0fcc890"
 
-// SecondFragment
-const val LAT = "57"
-const val LON = "24.0833"

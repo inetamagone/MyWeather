@@ -8,17 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.adapter.DateViewAdapter
 import com.example.myweather.model.DateWeather
-import com.example.myweather.utils.API_Key
-import com.example.myweather.utils.LAT
-import com.example.myweather.utils.LON
+import com.example.myweather.utils.API_KEY
 import com.example.myweather.viewModels.DateViewModel
 import com.example.myweather.viewModels.DateViewModelFactory
 import org.json.JSONObject
@@ -27,6 +23,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 private const val TAG = "SecondFragment"
+private var lat: String = ""
+private var lon: String = ""
+
 
 class SecondFragment : Fragment() {
     private var viewManager = LinearLayoutManager(context)
@@ -41,7 +40,13 @@ class SecondFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_second, container, false)
 
+        // Getting String values from the FirstFragment
         val cityString = requireArguments().getString("cityName")
+        val latString = requireArguments().getString("latString")
+        val lonString = requireArguments().getString("lonString")
+        lat = latString.toString()
+        lon = lonString.toString()
+
         val viewTitle = view.findViewById<TextView>(R.id.title_text)
         viewTitle.text = resources.getString(R.string.weather_in_city, cityString)
 
@@ -75,8 +80,9 @@ class SecondFragment : Fragment() {
     inner class getWeatherByDate() : AsyncTask<String, Void, String>() {
 
         var BASE_URL_SECOND =
-            "https://api.openweathermap.org/data/2.5/forecast?lat=$LAT&lon=$LON&units=metric&appid=$API_Key"
+            "https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&units=metric&appid=$API_KEY"
             // https://api.openweathermap.org/data/2.5/forecast?lat=57&lon=24.0833&units=metric&appid=91db09ff13832921fd93739ff0fcc890
+
         override fun doInBackground(vararg params: String?): String? {
             var response: String?
             try {
@@ -102,7 +108,7 @@ class SecondFragment : Fragment() {
                 val wind = list.getJSONObject("wind")
                 val dateText: Long = list.getLong("dt")
 
-                val dateTextFormatted = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).format(
+                val dateTextFormatted = SimpleDateFormat("d/MMM/yyyy", Locale.ENGLISH).format(
                     Date(dateText * 1000)
                 )
                 val temp = main.getString("temp") + "°C"
@@ -112,7 +118,6 @@ class SecondFragment : Fragment() {
                 var dateWeatherData = DateWeather(dateTextFormatted, temp, windSpeed, iconId)
                 val viewModel = DateViewModel()
                 viewModel.add(dateWeatherData)
-
                 //dateRecycler.adapter?.notifyDataSetChanged()
 
                 Log.d(TAG, "date: $dateTextFormatted")

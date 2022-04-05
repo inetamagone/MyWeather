@@ -1,7 +1,6 @@
 package com.example.myweather
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
@@ -14,10 +13,8 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
-import com.example.myweather.utils.API_Key
+import com.example.myweather.utils.API_KEY
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONObject
 import java.io.BufferedInputStream
@@ -66,8 +63,11 @@ class FirstFragment : Fragment() {
             Log.d(TAG, "Button clicked to navigate to the SecondFragment")
             val cityString = view?.findViewById<TextView>(R.id.city_name).text.toString()
 
+
             navController.navigate(R.id.action_firstFragment_to_secondFragment, Bundle().apply {
                 putString("cityName", cityString)
+                putString("latString", lat)
+                putString("lonString", lon)
             })
         }
     }
@@ -92,7 +92,7 @@ class FirstFragment : Fragment() {
 
         private var CITY = getCity()
         val BASE_URL_FIRST =
-            "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_Key"
+            "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_KEY"
 
         override fun doInBackground(vararg params: String?): String? {
             var response: String?
@@ -158,8 +158,8 @@ class FirstFragment : Fragment() {
                 // http://openweathermap.org/img/wn/04d@2x.png
 
                 // For the API call in the SecondFragment
-                val lat = coord.getString("lat")
-                val lon = coord.getString("lon")
+                lat = coord.getString("lat")
+                lon = coord.getString("lon")
 
                 /* Populating extracted data into the views */
                 view?.findViewById<TextView>(R.id.city_name)?.text = address
@@ -184,19 +184,6 @@ class FirstFragment : Fragment() {
                     }
                 }
                 thread.start()
-
-                // Send address, lon, lat to the SecondFragment
-//                val bundle = Bundle()
-//                bundle.putString("city", address)  // Key, value
-//                val secondFragment = SecondFragment()
-//                secondFragment.arguments = bundle
-//                fragmentManager?.beginTransaction()?.replace(R.id.fragmentContainerView, secondFragment)?.commit()
-
-            // Pass data to the secondFragment
-//                val secondFragment = SecondFragment()
-//                secondFragment.setArguments(bundle)
-//                val fragmentManager = getActivity()?.getSupportFragmentManager()
-//                fragmentManager?.beginTransaction()?.replace(R.id.content, secondFragment)?.commit()
 
                 Log.d(TAG, "For the SecondFragment: $lat, $lon")
                 Log.d(TAG, "onPostExecute Called")
