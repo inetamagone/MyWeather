@@ -35,7 +35,7 @@
                     android:id="@+id/city_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Riga"
+                    android:text="@string/city_name"
                     android:textColor="@color/black"
                     android:textSize="34sp" />
 
@@ -43,7 +43,7 @@
                     android:id="@+id/updated_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Last updated: 25 March 2022, 16:07"
+                    android:text="@string/last_updated"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
@@ -68,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Sunny"
+                    android:text="@string/conditions"
                     android:textSize="16dp" />
 
                 <TextView
@@ -89,7 +89,7 @@
                         android:id="@+id/temp_min"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Min temp: 22°C" />
+                        android:text="@string/temp_min" />
 
                     <Space
                         android:layout_width="50dp"
@@ -99,7 +99,7 @@
                         android:id="@+id/temp_max"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Max temp: 27°C" />
+                        android:text="@string/temp_max" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -169,14 +169,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Wind"
+                        android:text="@string/wind_title"
                         android:textSize="12dp" />
 
                     <TextView
                         android:id="@+id/wind_data"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="10 km/h"
+                        android:text="@string/current_wind"
                         android:textSize="14dp" />
                 </LinearLayout>
 
@@ -205,14 +205,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Humidity"
+                        android:text="@string/humidity_title"
                         android:textSize="12dp" />
 
                     <TextView
                         android:id="@+id/humidity_data"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="20 %"
+                        android:text="@string/current_humidity"
                         android:textSize="14dp" />
                 </LinearLayout>
 
@@ -247,14 +247,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Pressure"
+                        android:text="@string/pressure_title"
                         android:textSize="12dp" />
 
                     <TextView
                         android:id="@+id/pressure"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="20 %"
+                        android:text="@string/current_pressure"
                         android:textSize="14dp" />
                 </LinearLayout>
 
@@ -267,7 +267,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="@string/next_days"
+                    android:text="@string/see_more"
                     android:gravity="center"
                     android:padding="8dp"/>
             </LinearLayout>

@@ -134,12 +134,12 @@ class FirstFragment : Fragment() {
 
                 val updatedAt: Long = jsonObj.getLong("dt")
                 val upDatedAtText =
-                    "Updated at: " + SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(
+                    SimpleDateFormat("dd/MM/yyyy  HH:mm", Locale.ENGLISH).format(
                         Date(updatedAt * 1000)
                     )
-                val temp = main.getString("temp") + "°C"
-                val tempMin = "Min Temp: " + main.getString("temp_min") + "°C"
-                val tempMax = "Max Temp: " + main.getString("temp_max") + "°C"
+                val temp = main.getString("temp")
+                val tempMin = main.getString("temp_min")
+                val tempMax = main.getString("temp_max")
                 val pressure = main.getString("pressure")
                 val humidity = main.getString("humidity")
 
@@ -156,16 +156,16 @@ class FirstFragment : Fragment() {
                 lon = coord.getString("lon")
 
                 /* Populating extracted data into the views */
-                view?.findViewById<TextView>(R.id.city_name)?.text = address
-                view?.findViewById<TextView>(R.id.updated_time)?.text = upDatedAtText
-                view?.findViewById<TextView>(R.id.conditions)?.text = weatherDescription
-                view?.findViewById<TextView>(R.id.temperature)?.text = temp
-                view?.findViewById<TextView>(R.id.temp_min)?.text = tempMin
-                view?.findViewById<TextView>(R.id.temp_max)?.text = tempMax
-                view?.findViewById<TextView>(R.id.pressure)?.text = pressure
-                view?.findViewById<TextView>(R.id.wind_data)?.text = "$windSpeed m/s"
-                view?.findViewById<TextView>(R.id.humidity_data)?.text = "$humidity %"
-                view?.findViewById<TextView>(R.id.pressure)?.text = "$pressure hPa"
+
+                view?.findViewById<TextView>(R.id.city_name)?.text = resources.getString(R.string.city_name, address)
+                view?.findViewById<TextView>(R.id.updated_time)?.text = resources.getString(R.string.last_updated, upDatedAtText)
+                view?.findViewById<TextView>(R.id.conditions)?.text = resources.getString(R.string.conditions, weatherDescription)
+                view?.findViewById<TextView>(R.id.temperature)?.text = resources.getString(R.string.current_temp, temp)
+                view?.findViewById<TextView>(R.id.temp_min)?.text = resources.getString(R.string.temp_min, tempMin)
+                view?.findViewById<TextView>(R.id.temp_max)?.text = resources.getString(R.string.temp_max, tempMax)
+                view?.findViewById<TextView>(R.id.pressure)?.text = resources.getString(R.string.current_pressure, pressure)
+                view?.findViewById<TextView>(R.id.wind_data)?.text = resources.getString(R.string.current_wind, windSpeed)
+                view?.findViewById<TextView>(R.id.humidity_data)?.text = resources.getString(R.string.current_humidity, humidity + " %")
 
                 // Image
                 // android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
