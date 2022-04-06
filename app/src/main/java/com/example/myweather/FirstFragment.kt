@@ -53,6 +53,7 @@ class FirstFragment : Fragment() {
     }
 
     // Navigation to the SecondFragment
+    //TODO Empty screen when nothing in Search. Should proceed with current one I believe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -60,9 +61,10 @@ class FirstFragment : Fragment() {
 
         view.findViewById<Button>(R.id.button_next).setOnClickListener {
             Log.d(TAG, "Button clicked to navigate to the SecondFragment")
-            val cityString = view?.findViewById<TextView>(R.id.city_name).text.toString()
+            //TODO not necessary null safety here view always not null
+            val cityString = view.findViewById<TextView>(R.id.city_name).text.toString()
 
-
+            //TODO it is good you learned navController approach as well. Good practice
             navController.navigate(R.id.action_firstFragment_to_secondFragment, Bundle().apply {
                 putString("cityName", cityString)
                 putString("latString", lat)
@@ -80,11 +82,13 @@ class FirstFragment : Fragment() {
      /* On rotation onCreateView() calls twice, the first time CITY is stored but on the second time is null and displays null */
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
+		//TODO val or exclude variable at all
         var storedCity = savedInstanceState?.getCharSequence("Saved city")
         CITY = storedCity.toString()
         Log.d(TAG, "Restored city $storedCity")
     }
 
+    //TODO Class naming
     inner class getWeather() : AsyncTask<String, Void, String>() {
 
         override fun doInBackground(vararg params: String?): String? {
@@ -260,7 +264,8 @@ class FirstFragment : Fragment() {
                 lon = coord.getString("lon")
 
                 /* Populating extracted data into the views */
-                view?.findViewById<TextView>(R.id.city_name)?.text = address
+                //TODO
+                requireActivity().findViewById<TextView>(R.id.city_name).text = address
                 view?.findViewById<TextView>(R.id.updated_time)?.text = upDatedAtText
                 view?.findViewById<TextView>(R.id.conditions)?.text = weatherDescription
                 view?.findViewById<TextView>(R.id.temperature)?.text = temp

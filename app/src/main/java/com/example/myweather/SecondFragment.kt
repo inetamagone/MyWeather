@@ -57,6 +57,9 @@ class SecondFragment : Fragment() {
         val factory = DateViewModelFactory()
         viewModel = ViewModelProvider(this, factory).get(DateViewModel::class.java)
 
+        //TODO Wasn't initialized lateinit
+        dateRecycler = view.findViewById(R.id.recycler_view)
+
         initialiseAdapter()
         getWeatherByDate().execute()
         //dateRecycler.adapter?.notifyDataSetChanged()
@@ -69,7 +72,8 @@ class SecondFragment : Fragment() {
         observeData()
     }
 
-    fun observeData() {
+    //TODO green underlines
+    private fun observeData() {
         viewModel.list.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             dateRecycler.adapter = DateViewAdapter(viewModel,this, arrayList)
         })
@@ -78,9 +82,11 @@ class SecondFragment : Fragment() {
 //        })
     }
 
+    //TODO Depricated + leaks may occur but let it stay as is
     inner class getWeatherByDate() : AsyncTask<String, Void, String>() {
 
-        var BASE_URL_SECOND =
+        //TODO green underlines, val, const
+        val BASE_URL_SECOND =
             "https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&units=metric&appid=$API_KEY"
             // https://api.openweathermap.org/data/2.5/forecast?lat=57&lon=24.0833&units=metric&appid=91db09ff13832921fd93739ff0fcc890
 
@@ -102,6 +108,7 @@ class SecondFragment : Fragment() {
             super.onPostExecute(result)
             try {
                 /* Extracting JSON from the API */
+                //TODO Now when it works let simplify code by Moshi usage
                 val jsonObj = JSONObject(result)
                 val list = jsonObj.getJSONArray("list").getJSONObject(0)
                 val main = list.getJSONObject("main")
@@ -117,7 +124,8 @@ class SecondFragment : Fragment() {
                 val windSpeed = wind.getString("speed")
 
                 var dateWeatherData = DateWeather(dateTextFormatted, temp, windSpeed, iconId)
-                val viewModel = DateViewModel()
+                //TODO was declared new local variable and response data was added to it instead of the global viewmodel
+                //val viewModel = DateViewModel()
                 viewModel.add(dateWeatherData)
                 //dateRecycler.adapter?.notifyDataSetChanged()
 
