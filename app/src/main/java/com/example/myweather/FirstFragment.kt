@@ -25,9 +25,9 @@ import java.util.*
 
 private const val TAG = "FirstFragment"
 
-private var CITY = "Riga"
-val BASE_URL_FIRST =
-    "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_KEY"
+private var city = "Riga"
+private var baseUrlFirst =
+    "https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$API_KEY"
     // https://api.openweathermap.org/data/2.5/weather?q=Riga&units=metric&appid=91db09ff13832921fd93739ff0fcc890
 private var lat = ""
 private var lon = ""
@@ -80,7 +80,7 @@ class FirstFragment : Fragment() {
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         val storedCity = savedInstanceState?.getCharSequence("Saved city")
-        CITY = storedCity.toString()
+        city = storedCity.toString()
         Log.d(TAG, "Restored city $storedCity")
     }
 
@@ -89,10 +89,10 @@ class FirstFragment : Fragment() {
         override fun doInBackground(vararg params: String?): String? {
             var response: String?
             try {
-                response = URL(BASE_URL_FIRST).readText(
+                response = URL(baseUrlFirst).readText(
                     Charsets.UTF_8
                 )
-                Log.d(TAG, "get from URL - City: $CITY")
+                Log.d(TAG, "get from URL - City: $city")
                 Log.d(TAG, "get from URL Called: $response")
             } catch (e: Exception) {
                 Log.d(TAG, "doInBackground Catch Exception: $e")
@@ -291,12 +291,12 @@ class FirstFragment : Fragment() {
     fun getCity(): String {
         val editCity = view?.findViewById<TextInputEditText>(R.id.edit_city)
         if (editCity?.text.isNullOrEmpty()) {
-            CITY = "Riga"
+            city = "Riga"
         } else {
-            CITY = editCity?.text.toString()
-            Log.v(TAG, "Change cityName: $CITY")
+            city = editCity?.text.toString()
+            Log.v(TAG, "Change cityName: $city")
             editCity?.setText("")
         }
-        return CITY
+        return city
     }
 }

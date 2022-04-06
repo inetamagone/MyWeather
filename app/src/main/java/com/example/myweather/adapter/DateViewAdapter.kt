@@ -10,9 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.R
-import com.example.myweather.SecondFragment
 import com.example.myweather.model.DateWeather
-import com.example.myweather.viewModels.DateViewModel
 import java.io.BufferedInputStream
 import java.io.IOException
 import java.net.URL
@@ -27,7 +25,7 @@ class DateViewAdapter (
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int): DateViewAdapter.DateViewHolder {
-        var root = LayoutInflater.from(parent.context)
+        val root = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_item, parent, false)
         return DateViewHolder(root)
     }
