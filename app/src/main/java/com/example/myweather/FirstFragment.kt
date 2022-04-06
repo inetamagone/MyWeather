@@ -26,15 +26,14 @@ import java.util.*
 private const val TAG = "FirstFragment"
 
 // https://api.openweathermap.org/data/2.5/weather?q=Riga&units=metric&appid=91db09ff13832921fd93739ff0fcc890
-private var CITY = ""
+private var CITY = "Riga"
+
+val BASE_URL_FIRST =
+    "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_KEY"
 private var lat = ""
 private var lon = ""
 
 class FirstFragment : Fragment() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate called")
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +45,7 @@ class FirstFragment : Fragment() {
         // Search function
         val searchIcon = view.findViewById<ImageView>(R.id.search_icon)
         searchIcon.setOnClickListener {
-            getWeather().execute()
+            searchWeather().execute()
             Log.d(TAG, "Search Button clicked")
         }
         Log.d(TAG, "OnCreateView called")
@@ -74,7 +73,6 @@ class FirstFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.d(TAG, "Saved Instance State")
         val cityString = view?.findViewById<TextView>(R.id.city_name)?.text
         outState.putCharSequence("Saved city", cityString)
         Log.d(TAG, "Saved city $cityString")
@@ -82,7 +80,6 @@ class FirstFragment : Fragment() {
      /* On rotation onCreateView() calls twice, the first time CITY is stored but on the second time is null and displays null */
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        Log.d(TAG, "View State Restored")
         var storedCity = savedInstanceState?.getCharSequence("Saved city")
         CITY = storedCity.toString()
         Log.d(TAG, "Restored city $storedCity")
@@ -90,17 +87,14 @@ class FirstFragment : Fragment() {
 
     inner class getWeather() : AsyncTask<String, Void, String>() {
 
-        private var CITY = getCity()
-        val BASE_URL_FIRST =
-            "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_KEY"
-
         override fun doInBackground(vararg params: String?): String? {
             var response: String?
             try {
                 response = URL(BASE_URL_FIRST).readText(
                     Charsets.UTF_8
                 )
-                Log.d(TAG, "doInBackground Called, $response")
+                Log.d(TAG, "get from URL - City: $CITY")
+                Log.d(TAG, "get from URL Called: $response")
             } catch (e: Exception) {
                 Log.d(TAG, "doInBackground Catch Exception: $e")
                 response = null
@@ -180,13 +174,116 @@ class FirstFragment : Fragment() {
                         val image = view?.findViewById<ImageView>(R.id.image_main)
                         image?.setImageBitmap(getImageBitmap(imageUrl))
                     } catch (e: Exception) {
-                        Log.d(TAG, "Exception: $e")
+                        Log.d(TAG, "Exception on picture thread: $e")
                     }
                 }
                 thread.start()
 
-                Log.d(TAG, "For the SecondFragment: $lat, $lon")
-                Log.d(TAG, "onPostExecute Called")
+                Log.d(TAG, "onPostExecute Called - got JSON and populated views")
+            } catch (e: Exception) {
+                Log.d(TAG, "Exception: $e")
+            }
+        }
+    }
+
+    inner class searchWeather() : AsyncTask<String, Void, String>() {
+
+        private var CITY = getCity()
+        val BASE_URL_FIRST =
+            "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_KEY"
+
+        override fun doInBackground(vararg params: String?): String? {
+            var response: String?
+            try {
+                response = URL(BASE_URL_FIRST).readText(
+                    Charsets.UTF_8
+                )
+                Log.d(TAG, "get from URL search method: $response")
+            } catch (e: Exception) {
+                Log.d(TAG, "doInBackground Catch Exception: $e")
+                response = null
+            }
+            return response
+        }
+
+        // Picture icon
+        private fun getImageBitmap(url: String): Bitmap? {
+            var bm: Bitmap? = null
+            try {
+                val aURL = URL(url)
+                val conn = aURL.openConnection()
+                conn.connect()
+                val `is` = conn.getInputStream()
+                val bis = BufferedInputStream(`is`)
+                bm = BitmapFactory.decodeStream(bis)
+                bis.close()
+                `is`.close()
+            } catch (e: IOException) {
+                Log.d(TAG,"Error getting bitmap: $e")
+            }
+            return bm
+        }
+
+        @SuppressLint("StringFormatMatches", "StringFormatInvalid")
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            try {
+                /* Extracting JSON from the API */
+                val jsonObj = JSONObject(result)
+                val main = jsonObj.getJSONObject("main")
+                val sys = jsonObj.getJSONObject("sys")
+                val wind = jsonObj.getJSONObject("wind")
+                val coord = jsonObj.getJSONObject("coord")
+                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
+
+                val updatedAt: Long = jsonObj.getLong("dt")
+                val upDatedAtText =
+                    "Updated at: " + SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(
+                        Date(updatedAt * 1000)
+                    )
+                val temp = main.getString("temp") + "°C"
+                val tempMin = "Min Temp: " + main.getString("temp_min") + "°C"
+                val tempMax = "Max Temp: " + main.getString("temp_max") + "°C"
+                val pressure = main.getString("pressure")
+                val humidity = main.getString("humidity")
+
+                val windSpeed = wind.getString("speed")
+                val weatherDescription = weather.getString("description")
+                val address = jsonObj.getString("name") + ", " + sys.getString("country")
+
+                val icon = weather.getString("icon")
+                val imageUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
+                // http://openweathermap.org/img/wn/04d@2x.png
+
+                // For the API call in the SecondFragment
+                lat = coord.getString("lat")
+                lon = coord.getString("lon")
+
+                /* Populating extracted data into the views */
+                view?.findViewById<TextView>(R.id.city_name)?.text = address
+                view?.findViewById<TextView>(R.id.updated_time)?.text = upDatedAtText
+                view?.findViewById<TextView>(R.id.conditions)?.text = weatherDescription
+                view?.findViewById<TextView>(R.id.temperature)?.text = temp
+                view?.findViewById<TextView>(R.id.temp_min)?.text = tempMin
+                view?.findViewById<TextView>(R.id.temp_max)?.text = tempMax
+                view?.findViewById<TextView>(R.id.pressure)?.text = pressure
+                view?.findViewById<TextView>(R.id.wind_data)?.text = "$windSpeed m/s"
+                view?.findViewById<TextView>(R.id.humidity_data)?.text = "$humidity %"
+                view?.findViewById<TextView>(R.id.pressure)?.text = "$pressure hPa"
+
+                // Image
+                // android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
+                val thread = Thread {
+                    try {
+                        val image = view?.findViewById<ImageView>(R.id.image_main)
+                        image?.setImageBitmap(getImageBitmap(imageUrl))
+                    } catch (e: Exception) {
+                        Log.d(TAG, "Exception on picture thread: $e")
+                    }
+                }
+                thread.start()
+
+                Log.d(TAG, "onPostExecute Called - got JSON and populated views")
             } catch (e: Exception) {
                 Log.d(TAG, "Exception: $e")
             }

@@ -49,6 +49,7 @@ class SecondFragment : Fragment() {
 
         val viewTitle = view.findViewById<TextView>(R.id.title_text)
         viewTitle.text = resources.getString(R.string.weather_in_city, cityString)
+        Log.d(TAG, "Title text: ${viewTitle.text}")
 
         dateRecycler = view.findViewById(R.id.recycler_view)
         //dateRecycler.adapter = DateViewAdapter(viewModel, this, arrayList)
@@ -108,7 +109,7 @@ class SecondFragment : Fragment() {
                 val wind = list.getJSONObject("wind")
                 val dateText: Long = list.getLong("dt")
 
-                val dateTextFormatted = SimpleDateFormat("d/MMM/yyyy", Locale.ENGLISH).format(
+                val dateTextFormatted = SimpleDateFormat("d/MMM/yyyy HH:mm", Locale.ENGLISH).format(
                     Date(dateText * 1000)
                 )
                 val temp = main.getString("temp") + "°C"
