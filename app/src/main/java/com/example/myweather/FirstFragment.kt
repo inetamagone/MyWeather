@@ -25,11 +25,10 @@ import java.util.*
 
 private const val TAG = "FirstFragment"
 
-// https://api.openweathermap.org/data/2.5/weather?q=Riga&units=metric&appid=91db09ff13832921fd93739ff0fcc890
 private var CITY = "Riga"
-
 val BASE_URL_FIRST =
     "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_KEY"
+    // https://api.openweathermap.org/data/2.5/weather?q=Riga&units=metric&appid=91db09ff13832921fd93739ff0fcc890
 private var lat = ""
 private var lon = ""
 
@@ -41,11 +40,11 @@ class FirstFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_first, container, false)
         // API call here
-        getWeather().execute()
+        GetWeather().execute()
         // Search function
         val searchIcon = view.findViewById<ImageView>(R.id.search_icon)
         searchIcon.setOnClickListener {
-            searchWeather().execute()
+            SearchWeather().execute()
             Log.d(TAG, "Search Button clicked")
         }
         Log.d(TAG, "OnCreateView called")
@@ -60,7 +59,7 @@ class FirstFragment : Fragment() {
 
         view.findViewById<Button>(R.id.button_next).setOnClickListener {
             Log.d(TAG, "Button clicked to navigate to the SecondFragment")
-            val cityString = view?.findViewById<TextView>(R.id.city_name).text.toString()
+            val cityString = view.findViewById<TextView>(R.id.city_name).text.toString()
 
 
             navController.navigate(R.id.action_firstFragment_to_secondFragment, Bundle().apply {
@@ -80,12 +79,12 @@ class FirstFragment : Fragment() {
      /* On rotation onCreateView() calls twice, the first time CITY is stored but on the second time is null and displays null */
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        var storedCity = savedInstanceState?.getCharSequence("Saved city")
+        val storedCity = savedInstanceState?.getCharSequence("Saved city")
         CITY = storedCity.toString()
         Log.d(TAG, "Restored city $storedCity")
     }
 
-    inner class getWeather() : AsyncTask<String, Void, String>() {
+    inner class GetWeather() : AsyncTask<String, Void, String>() {
 
         override fun doInBackground(vararg params: String?): String? {
             var response: String?
@@ -157,15 +156,15 @@ class FirstFragment : Fragment() {
 
                 /* Populating extracted data into the views */
 
-                view?.findViewById<TextView>(R.id.city_name)?.text = resources.getString(R.string.city_name, address)
-                view?.findViewById<TextView>(R.id.updated_time)?.text = resources.getString(R.string.last_updated, upDatedAtText)
-                view?.findViewById<TextView>(R.id.conditions)?.text = resources.getString(R.string.conditions, weatherDescription)
-                view?.findViewById<TextView>(R.id.temperature)?.text = resources.getString(R.string.current_temp, temp)
-                view?.findViewById<TextView>(R.id.temp_min)?.text = resources.getString(R.string.temp_min, tempMin)
-                view?.findViewById<TextView>(R.id.temp_max)?.text = resources.getString(R.string.temp_max, tempMax)
-                view?.findViewById<TextView>(R.id.pressure)?.text = resources.getString(R.string.current_pressure, pressure)
-                view?.findViewById<TextView>(R.id.wind_data)?.text = resources.getString(R.string.current_wind, windSpeed)
-                view?.findViewById<TextView>(R.id.humidity_data)?.text = resources.getString(R.string.current_humidity, humidity + " %")
+                requireActivity().findViewById<TextView>(R.id.city_name)?.text = resources.getString(R.string.city_name, address)
+                requireActivity().findViewById<TextView>(R.id.updated_time)?.text = resources.getString(R.string.last_updated, upDatedAtText)
+                requireActivity().findViewById<TextView>(R.id.conditions)?.text = resources.getString(R.string.conditions, weatherDescription)
+                requireActivity().findViewById<TextView>(R.id.temperature)?.text = resources.getString(R.string.current_temp, temp)
+                requireActivity().findViewById<TextView>(R.id.temp_min)?.text = resources.getString(R.string.temp_min, tempMin)
+                requireActivity().findViewById<TextView>(R.id.temp_max)?.text = resources.getString(R.string.temp_max, tempMax)
+                requireActivity().findViewById<TextView>(R.id.pressure)?.text = resources.getString(R.string.current_pressure, pressure)
+                requireActivity().findViewById<TextView>(R.id.wind_data)?.text = resources.getString(R.string.current_wind, windSpeed)
+                requireActivity().findViewById<TextView>(R.id.humidity_data)?.text = resources.getString(R.string.current_humidity, humidity + " %")
 
                 // Image
                 // android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
@@ -186,7 +185,7 @@ class FirstFragment : Fragment() {
         }
     }
 
-    inner class searchWeather() : AsyncTask<String, Void, String>() {
+    inner class SearchWeather() : AsyncTask<String, Void, String>() {
 
         private var CITY = getCity()
         val BASE_URL_FIRST =
@@ -238,12 +237,12 @@ class FirstFragment : Fragment() {
 
                 val updatedAt: Long = jsonObj.getLong("dt")
                 val upDatedAtText =
-                    "Updated at: " + SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH).format(
+                    SimpleDateFormat("dd/MM/yyyy  HH:mm", Locale.ENGLISH).format(
                         Date(updatedAt * 1000)
                     )
-                val temp = main.getString("temp") + "°C"
-                val tempMin = "Min Temp: " + main.getString("temp_min") + "°C"
-                val tempMax = "Max Temp: " + main.getString("temp_max") + "°C"
+                val temp = main.getString("temp")
+                val tempMin = main.getString("temp_min")
+                val tempMax = main.getString("temp_max")
                 val pressure = main.getString("pressure")
                 val humidity = main.getString("humidity")
 
@@ -260,16 +259,15 @@ class FirstFragment : Fragment() {
                 lon = coord.getString("lon")
 
                 /* Populating extracted data into the views */
-                view?.findViewById<TextView>(R.id.city_name)?.text = address
-                view?.findViewById<TextView>(R.id.updated_time)?.text = upDatedAtText
-                view?.findViewById<TextView>(R.id.conditions)?.text = weatherDescription
-                view?.findViewById<TextView>(R.id.temperature)?.text = temp
-                view?.findViewById<TextView>(R.id.temp_min)?.text = tempMin
-                view?.findViewById<TextView>(R.id.temp_max)?.text = tempMax
-                view?.findViewById<TextView>(R.id.pressure)?.text = pressure
-                view?.findViewById<TextView>(R.id.wind_data)?.text = "$windSpeed m/s"
-                view?.findViewById<TextView>(R.id.humidity_data)?.text = "$humidity %"
-                view?.findViewById<TextView>(R.id.pressure)?.text = "$pressure hPa"
+                requireActivity().findViewById<TextView>(R.id.city_name)?.text = resources.getString(R.string.city_name, address)
+                requireActivity().findViewById<TextView>(R.id.updated_time)?.text = resources.getString(R.string.last_updated, upDatedAtText)
+                requireActivity().findViewById<TextView>(R.id.conditions)?.text = resources.getString(R.string.conditions, weatherDescription)
+                requireActivity().findViewById<TextView>(R.id.temperature)?.text = resources.getString(R.string.current_temp, temp)
+                requireActivity().findViewById<TextView>(R.id.temp_min)?.text = resources.getString(R.string.temp_min, tempMin)
+                requireActivity().findViewById<TextView>(R.id.temp_max)?.text = resources.getString(R.string.temp_max, tempMax)
+                requireActivity().findViewById<TextView>(R.id.pressure)?.text = resources.getString(R.string.current_pressure, pressure)
+                requireActivity().findViewById<TextView>(R.id.wind_data)?.text = resources.getString(R.string.current_wind, windSpeed)
+                requireActivity().findViewById<TextView>(R.id.humidity_data)?.text = resources.getString(R.string.current_humidity, humidity + " %")
 
                 // Image
                 // android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.

@@ -20,8 +20,6 @@ import java.net.URL
 private const val TAG = "DateViewAdapter"
 
 class DateViewAdapter (
-    private val viewModel: DateViewModel,
-    private val context: SecondFragment,
     private val arrayList: ArrayList<DateWeather>
 ) :
     RecyclerView.Adapter<DateViewAdapter.DateViewHolder>() {

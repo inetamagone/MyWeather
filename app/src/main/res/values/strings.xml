@@ -13,7 +13,7 @@
     <string name="wind_title">Wind</string>
     <string name="current_wind">%1$s m/s</string>
     <string name="humidity_title">Humidity</string>
-    <string name="current_humidity">%1$s</string>
+    <string name="current_humidity">%1$s </string>
     <string name="pressure_title">Pressure</string>
     <string name="current_pressure">%1$s hPa</string>
 
