@@ -33,6 +33,11 @@ class SecondFragment : Fragment() {
     private lateinit var dateRecycler: RecyclerView
     private lateinit var arrayList: ArrayList<DateWeather>
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate Called")
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,12 +49,11 @@ class SecondFragment : Fragment() {
         val cityString = requireArguments().getString("cityName")
         val latString = requireArguments().getString("latString")
         val lonString = requireArguments().getString("lonString")
+        // View title text
+        view.findViewById<TextView>(R.id.title_text).text = resources.getString(R.string.weather_in_city, cityString)
 
         lat = latString.toString()
         lon = lonString.toString()
-
-        // View title text
-        view.findViewById<TextView>(R.id.title_text).text = resources.getString(R.string.weather_in_city, cityString)
 
         val factory = DateViewModelFactory()
         viewModel = ViewModelProvider(this, factory).get(DateViewModel::class.java)
@@ -58,7 +62,7 @@ class SecondFragment : Fragment() {
 
         initialiseAdapter()
         GetWeatherByDate().execute()
-
+        Log.d(TAG, "OnCreateView Called")
         return view
     }
 

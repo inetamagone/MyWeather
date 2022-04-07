@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import com.bumptech.glide.Glide
 import com.example.myweather.utils.API_KEY
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONObject
@@ -101,24 +102,6 @@ class FirstFragment : Fragment() {
             return response
         }
 
-        // Picture icon
-        private fun getImageBitmap(url: String): Bitmap? {
-            var bm: Bitmap? = null
-            try {
-                val aURL = URL(url)
-                val conn = aURL.openConnection()
-                conn.connect()
-                val `is` = conn.getInputStream()
-                val bis = BufferedInputStream(`is`)
-                bm = BitmapFactory.decodeStream(bis)
-                bis.close()
-                `is`.close()
-            } catch (e: IOException) {
-                Log.d(TAG,"Error getting bitmap: $e")
-            }
-            return bm
-        }
-
         @SuppressLint("StringFormatMatches", "StringFormatInvalid")
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
@@ -155,7 +138,6 @@ class FirstFragment : Fragment() {
                 lon = coord.getString("lon")
 
                 /* Populating extracted data into the views */
-
                 requireActivity().findViewById<TextView>(R.id.city_name)?.text = resources.getString(R.string.city_name, address)
                 requireActivity().findViewById<TextView>(R.id.updated_time)?.text = resources.getString(R.string.last_updated, upDatedAtText)
                 requireActivity().findViewById<TextView>(R.id.conditions)?.text = resources.getString(R.string.conditions, weatherDescription)
@@ -166,17 +148,10 @@ class FirstFragment : Fragment() {
                 requireActivity().findViewById<TextView>(R.id.wind_data)?.text = resources.getString(R.string.current_wind, windSpeed)
                 requireActivity().findViewById<TextView>(R.id.humidity_data)?.text = resources.getString(R.string.current_humidity, humidity + " %")
 
-                // Image
-                // android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
-                val thread = Thread {
-                    try {
-                        val image = view?.findViewById<ImageView>(R.id.image_main)
-                        image?.setImageBitmap(getImageBitmap(imageUrl))
-                    } catch (e: Exception) {
-                        Log.d(TAG, "Exception on picture thread: $e")
-                    }
-                }
-                thread.start()
+                // Image icon
+                Glide.with(context!!)
+                    .load(imageUrl)
+                    .into(view?.findViewById<ImageView>(R.id.image_main)!!)
 
                 Log.d(TAG, "onPostExecute Called - got JSON and populated views")
             } catch (e: Exception) {
@@ -205,24 +180,6 @@ class FirstFragment : Fragment() {
             return response
         }
 
-        // Picture icon
-        private fun getImageBitmap(url: String): Bitmap? {
-            var bm: Bitmap? = null
-            try {
-                val aURL = URL(url)
-                val conn = aURL.openConnection()
-                conn.connect()
-                val `is` = conn.getInputStream()
-                val bis = BufferedInputStream(`is`)
-                bm = BitmapFactory.decodeStream(bis)
-                bis.close()
-                `is`.close()
-            } catch (e: IOException) {
-                Log.d(TAG,"Error getting bitmap: $e")
-            }
-            return bm
-        }
-
         @SuppressLint("StringFormatMatches", "StringFormatInvalid")
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
@@ -269,17 +226,10 @@ class FirstFragment : Fragment() {
                 requireActivity().findViewById<TextView>(R.id.wind_data)?.text = resources.getString(R.string.current_wind, windSpeed)
                 requireActivity().findViewById<TextView>(R.id.humidity_data)?.text = resources.getString(R.string.current_humidity, humidity + " %")
 
-                // Image
-                // android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
-                val thread = Thread {
-                    try {
-                        val image = view?.findViewById<ImageView>(R.id.image_main)
-                        image?.setImageBitmap(getImageBitmap(imageUrl))
-                    } catch (e: Exception) {
-                        Log.d(TAG, "Exception on picture thread: $e")
-                    }
-                }
-                thread.start()
+                // Image icon
+                Glide.with(context!!)
+                    .load(imageUrl)
+                    .into(view?.findViewById<ImageView>(R.id.image_main)!!)
 
                 Log.d(TAG, "onPostExecute Called - got JSON and populated views")
             } catch (e: Exception) {
