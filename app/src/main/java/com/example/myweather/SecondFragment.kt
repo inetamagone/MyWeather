@@ -21,6 +21,7 @@ import org.json.JSONObject
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 private const val TAG = "SecondFragment"
 
@@ -50,7 +51,8 @@ class SecondFragment : Fragment() {
         val latString = requireArguments().getString("latString")
         val lonString = requireArguments().getString("lonString")
         // View title text
-        view.findViewById<TextView>(R.id.title_text).text = resources.getString(R.string.weather_in_city, cityString)
+        view.findViewById<TextView>(R.id.title_text).text =
+            resources.getString(R.string.weather_in_city, cityString)
 
         lat = latString.toString()
         lon = lonString.toString()
@@ -79,7 +81,8 @@ class SecondFragment : Fragment() {
 
     inner class GetWeatherByDate() : AsyncTask<String, Void, String>() {
 
-        private var baseUrlSecond = "https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&units=metric&appid=$API_KEY"
+        private var baseUrlSecond =
+            "https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&units=metric&appid=$API_KEY"
         // https://api.openweathermap.org/data/2.5/forecast?lat=57&lon=24.0833&units=metric&appid=91db09ff13832921fd93739ff0fcc890
 
         override fun doInBackground(vararg params: String?): String? {
@@ -100,27 +103,30 @@ class SecondFragment : Fragment() {
             super.onPostExecute(result)
             try {
                 /* Extracting JSON from the API */
+                //TODO Now when it works let simplify code by Moshi usage
                 val jsonObj = JSONObject(result)
-                val list = jsonObj.getJSONArray("list").getJSONObject(0)
-                val main = list.getJSONObject("main")
-                val weather = list.getJSONArray("weather").getJSONObject(0)
-                val wind = list.getJSONObject("wind")
-                val dateText: Long = list.getLong("dt")
+                val jsonList = jsonObj.getJSONArray("list")//.getJSONObject(0)
+                for (i in 0 until jsonList.length()) {
+                    val objects = jsonList.getJSONObject(i)
+                    val main: JSONObject = objects["main"] as JSONObject
+                    val temp = main.getString("temp")
+                    val wind: JSONObject = objects["wind"] as JSONObject
+                    val windSpeed = wind.getString("speed")
+                    val weatherArray = objects.getJSONArray("weather")
+                    val weather = weatherArray.getJSONObject(0)
+                    val iconId = weather.getString("icon")
+                    val dateText: Long = objects.getLong("dt")
 
-                val dateTextFormatted = SimpleDateFormat("d/MMM/yyyy HH:mm", Locale.ENGLISH).format(
-                    Date(dateText * 1000)
-                )
-                val temp = main.getString("temp") + "°C"
-                val iconId = weather.getString("icon")
-                val windSpeed = wind.getString("speed")
+                    val dateTextFormatted =
+                        SimpleDateFormat("d MMM yyyy    HH:mm", Locale.ENGLISH).format(
+                            Date(dateText * 1000)
+                        )
 
-                val dateWeatherData = DateWeather(dateTextFormatted, temp, windSpeed, iconId)
-                viewModel.add(dateWeatherData)
+                    val dateWeatherData = DateWeather(dateTextFormatted, temp, windSpeed, iconId)
+                    viewModel.add(dateWeatherData)
+                }
 
-                Log.d(TAG, "date: $dateTextFormatted")
-                Log.d(TAG, "temp: $temp")
-                Log.d(TAG, "iconId: $iconId")
-                Log.d(TAG, "windSpeed: $windSpeed")
+                Log.d(TAG, "onPostExecute called")
             } catch (e: Exception) {
                 Log.d(TAG, "Exception onPostExecute: $e")
             }

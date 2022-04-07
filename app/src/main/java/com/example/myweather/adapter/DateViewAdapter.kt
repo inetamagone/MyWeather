@@ -3,14 +3,13 @@ package com.example.myweather.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myweather.R
 import com.example.myweather.model.DateWeather
 
-class DateViewAdapter (
+class DateViewAdapter(
     private val arrayList: ArrayList<DateWeather>
 ) :
     RecyclerView.Adapter<DateViewAdapter.DateViewHolder>() {
@@ -34,16 +33,19 @@ class DateViewAdapter (
 
     inner class DateViewHolder(private val binding: View) : RecyclerView.ViewHolder(binding) {
         fun bind(dateWeather: DateWeather) {
-            binding.findViewById<TextView>(R.id.date_text).text = dateWeather.dateText
-            binding.findViewById<TextView>(R.id.date_temp).text = dateWeather.temperature
-            binding.findViewById<TextView>(R.id.date_wind).text = dateWeather.windSpeed
+            binding.findViewById<TextView>(R.id.date_text).text =
+                binding.resources.getString(R.string.second_date, dateWeather.dateText + "h")
+            binding.findViewById<TextView>(R.id.date_temp).text =
+                binding.resources.getString(R.string.date_temp, dateWeather.temperature)
+            binding.findViewById<TextView>(R.id.date_wind).text =
+                binding.resources.getString(R.string.date_wind, dateWeather.windSpeed)
 
             // Setting picture icon
             val imageUrl = "https://openweathermap.org/img/wn/${dateWeather.iconId}@2x.png"
 
             Glide.with(binding)
                 .load(imageUrl)
-                .into(binding.findViewById<ImageView>(R.id.date_icon))
+                .into(binding.findViewById(R.id.date_icon))
         }
     }
 }

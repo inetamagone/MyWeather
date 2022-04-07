@@ -3,15 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="8dp"
+    android:layout_margin="2dp"
     app:cardCornerRadius="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
+        android:paddingTop="2dp"
         android:background="@color/light_color">
         <TextView
             android:id="@+id/date_text"
@@ -19,9 +18,9 @@
             android:layout_height="wrap_content"
             android:paddingStart="40dp"
             android:textColor="@color/black"
-            android:textSize="28sp"
+            android:textSize="20sp"
             android:textStyle="bold|italic"
-            android:text="April 1 2022"/>
+            android:text="@string/second_date"/>
         <Space
             android:layout_width="match_parent"
             android:layout_height="10dp" />
@@ -29,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center"
             android:weightSum="5">
             <TextView
                 android:id="@+id/date_temp"
@@ -37,9 +37,9 @@
                 android:textColor="@color/black"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:text="25°C"
+                android:text="@string/date_temp"
                 android:textStyle="bold"
-                android:textSize="35sp"/>
+                android:textSize="28sp"/>
             <TextView
                 android:id="@+id/date_wind"
                 android:layout_width="0dp"
@@ -47,13 +47,13 @@
                 android:gravity="center"
                 android:textColor="@color/black"
                 android:layout_weight="2"
-                android:text="Wind: 10 km/h"
+                android:text="@string/date_wind"
                 android:textStyle="italic"
-                android:textSize="28sp"/>
+                android:textSize="20sp"/>
             <ImageView
                 android:id="@+id/date_icon"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:importantForAccessibility="no"
                 android:layout_gravity="center"
                 android:layout_weight="1"

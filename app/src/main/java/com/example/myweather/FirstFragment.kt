@@ -1,8 +1,6 @@
 package com.example.myweather
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
@@ -18,8 +16,6 @@ import com.bumptech.glide.Glide
 import com.example.myweather.utils.API_KEY
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONObject
-import java.io.BufferedInputStream
-import java.io.IOException
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,7 +25,8 @@ private const val TAG = "FirstFragment"
 private var city = "Riga"
 private var baseUrlFirst =
     "https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$API_KEY"
-    // https://api.openweathermap.org/data/2.5/weather?q=Riga&units=metric&appid=91db09ff13832921fd93739ff0fcc890
+
+// https://api.openweathermap.org/data/2.5/weather?q=Riga&units=metric&appid=91db09ff13832921fd93739ff0fcc890
 private var lat = ""
 private var lon = ""
 
@@ -62,7 +59,6 @@ class FirstFragment : Fragment() {
             Log.d(TAG, "Button clicked to navigate to the SecondFragment")
             val cityString = view.findViewById<TextView>(R.id.city_name).text.toString()
 
-
             navController.navigate(R.id.action_firstFragment_to_secondFragment, Bundle().apply {
                 putString("cityName", cityString)
                 putString("latString", lat)
@@ -77,7 +73,7 @@ class FirstFragment : Fragment() {
         outState.putCharSequence("Saved city", cityString)
         Log.d(TAG, "Saved city $cityString")
     }
-     /* On rotation onCreateView() calls twice, the first time CITY is stored but on the second time is null and displays null */
+
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         val storedCity = savedInstanceState?.getCharSequence("Saved city")
@@ -138,15 +134,24 @@ class FirstFragment : Fragment() {
                 lon = coord.getString("lon")
 
                 /* Populating extracted data into the views */
-                requireActivity().findViewById<TextView>(R.id.city_name)?.text = resources.getString(R.string.city_name, address)
-                requireActivity().findViewById<TextView>(R.id.updated_time)?.text = resources.getString(R.string.last_updated, upDatedAtText)
-                requireActivity().findViewById<TextView>(R.id.conditions)?.text = resources.getString(R.string.conditions, weatherDescription)
-                requireActivity().findViewById<TextView>(R.id.temperature)?.text = resources.getString(R.string.current_temp, temp)
-                requireActivity().findViewById<TextView>(R.id.temp_min)?.text = resources.getString(R.string.temp_min, tempMin)
-                requireActivity().findViewById<TextView>(R.id.temp_max)?.text = resources.getString(R.string.temp_max, tempMax)
-                requireActivity().findViewById<TextView>(R.id.pressure)?.text = resources.getString(R.string.current_pressure, pressure)
-                requireActivity().findViewById<TextView>(R.id.wind_data)?.text = resources.getString(R.string.current_wind, windSpeed)
-                requireActivity().findViewById<TextView>(R.id.humidity_data)?.text = resources.getString(R.string.current_humidity, humidity + " %")
+                requireActivity().findViewById<TextView>(R.id.city_name)?.text =
+                    resources.getString(R.string.city_name, address)
+                requireActivity().findViewById<TextView>(R.id.updated_time)?.text =
+                    resources.getString(R.string.last_updated, upDatedAtText)
+                requireActivity().findViewById<TextView>(R.id.conditions)?.text =
+                    resources.getString(R.string.conditions, weatherDescription)
+                requireActivity().findViewById<TextView>(R.id.temperature)?.text =
+                    resources.getString(R.string.current_temp, temp)
+                requireActivity().findViewById<TextView>(R.id.temp_min)?.text =
+                    resources.getString(R.string.temp_min, tempMin)
+                requireActivity().findViewById<TextView>(R.id.temp_max)?.text =
+                    resources.getString(R.string.temp_max, tempMax)
+                requireActivity().findViewById<TextView>(R.id.pressure)?.text =
+                    resources.getString(R.string.current_pressure, pressure)
+                requireActivity().findViewById<TextView>(R.id.wind_data)?.text =
+                    resources.getString(R.string.current_wind, windSpeed)
+                requireActivity().findViewById<TextView>(R.id.humidity_data)?.text =
+                    resources.getString(R.string.current_humidity, humidity + " %")
 
                 // Image icon
                 Glide.with(context!!)
@@ -216,15 +221,24 @@ class FirstFragment : Fragment() {
                 lon = coord.getString("lon")
 
                 /* Populating extracted data into the views */
-                requireActivity().findViewById<TextView>(R.id.city_name)?.text = resources.getString(R.string.city_name, address)
-                requireActivity().findViewById<TextView>(R.id.updated_time)?.text = resources.getString(R.string.last_updated, upDatedAtText)
-                requireActivity().findViewById<TextView>(R.id.conditions)?.text = resources.getString(R.string.conditions, weatherDescription)
-                requireActivity().findViewById<TextView>(R.id.temperature)?.text = resources.getString(R.string.current_temp, temp)
-                requireActivity().findViewById<TextView>(R.id.temp_min)?.text = resources.getString(R.string.temp_min, tempMin)
-                requireActivity().findViewById<TextView>(R.id.temp_max)?.text = resources.getString(R.string.temp_max, tempMax)
-                requireActivity().findViewById<TextView>(R.id.pressure)?.text = resources.getString(R.string.current_pressure, pressure)
-                requireActivity().findViewById<TextView>(R.id.wind_data)?.text = resources.getString(R.string.current_wind, windSpeed)
-                requireActivity().findViewById<TextView>(R.id.humidity_data)?.text = resources.getString(R.string.current_humidity, humidity + " %")
+                requireActivity().findViewById<TextView>(R.id.city_name)?.text =
+                    resources.getString(R.string.city_name, address)
+                requireActivity().findViewById<TextView>(R.id.updated_time)?.text =
+                    resources.getString(R.string.last_updated, upDatedAtText)
+                requireActivity().findViewById<TextView>(R.id.conditions)?.text =
+                    resources.getString(R.string.conditions, weatherDescription)
+                requireActivity().findViewById<TextView>(R.id.temperature)?.text =
+                    resources.getString(R.string.current_temp, temp)
+                requireActivity().findViewById<TextView>(R.id.temp_min)?.text =
+                    resources.getString(R.string.temp_min, tempMin)
+                requireActivity().findViewById<TextView>(R.id.temp_max)?.text =
+                    resources.getString(R.string.temp_max, tempMax)
+                requireActivity().findViewById<TextView>(R.id.pressure)?.text =
+                    resources.getString(R.string.current_pressure, pressure)
+                requireActivity().findViewById<TextView>(R.id.wind_data)?.text =
+                    resources.getString(R.string.current_wind, windSpeed)
+                requireActivity().findViewById<TextView>(R.id.humidity_data)?.text =
+                    resources.getString(R.string.current_humidity, humidity + " %")
 
                 // Image icon
                 Glide.with(context!!)
