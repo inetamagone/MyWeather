@@ -3,38 +3,49 @@ package com.example.myweather.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.myweather.R
-import com.example.myweather.SecondFragment
 import com.example.myweather.model.DateWeather
 
-class DateViewAdapter(private val context: SecondFragment, private val dataset: List<DateWeather>) :
-RecyclerView.Adapter<DateViewAdapter.DateViewHolder>() {
+class DateViewAdapter(
+    private val arrayList: ArrayList<DateWeather>
+) :
+    RecyclerView.Adapter<DateViewAdapter.DateViewHolder>() {
 
-    class DateViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val dateView: TextView = view.findViewById(R.id.date_text)
-        val tempView: TextView = view.findViewById(R.id.date_temp)
-        val windView: TextView = view.findViewById(R.id.date_wind)
-        val iconView: ImageView = view.findViewById(R.id.date_icon)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DateViewHolder {
-        val adapterLayout = LayoutInflater.from(parent.context)
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): DateViewAdapter.DateViewHolder {
+        val root = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_item, parent, false)
-        return DateViewHolder(adapterLayout)
+        return DateViewHolder(root)
     }
 
-    override fun onBindViewHolder(holder: DateViewHolder, position: Int) {
-        val item = dataset[position]
-        holder.dateView.text = context.resources.getString(item.dateResourceId)
-        holder.tempView.text = context.resources.getString(item.temperatureResourceId)
-        holder.windView.text = context.resources.getString(item.windResourceId)
-        holder.iconView.setImageResource(item.icon_imgResourceId)
+    override fun onBindViewHolder(holder: DateViewAdapter.DateViewHolder, position: Int) {
+        holder.bind(arrayList[position])
     }
 
     override fun getItemCount(): Int {
-        return dataset.size
+        return arrayList.size
+    }
+
+    inner class DateViewHolder(private val binding: View) : RecyclerView.ViewHolder(binding) {
+        fun bind(dateWeather: DateWeather) {
+            binding.findViewById<TextView>(R.id.date_text).text =
+                binding.resources.getString(R.string.second_date, dateWeather.dateText + "h")
+            binding.findViewById<TextView>(R.id.date_temp).text =
+                binding.resources.getString(R.string.date_temp, dateWeather.temperature)
+            binding.findViewById<TextView>(R.id.date_wind).text =
+                binding.resources.getString(R.string.date_wind, dateWeather.windSpeed)
+
+            // Setting picture icon
+            val imageUrl = "https://openweathermap.org/img/wn/${dateWeather.iconId}@2x.png"
+
+            Glide.with(binding)
+                .load(imageUrl)
+                .into(binding.findViewById(R.id.date_icon))
+        }
     }
 }

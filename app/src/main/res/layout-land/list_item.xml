@@ -3,25 +3,27 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="5dp"
+    android:layout_margin="2dp"
     app:cardCornerRadius="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="7dp"
-        android:paddingStart="16dp"
+        android:paddingTop="2dp"
         android:background="@color/light_color">
         <TextView
             android:id="@+id/date_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:paddingStart="40dp"
             android:textColor="@color/black"
+            android:textSize="20sp"
             android:textStyle="bold|italic"
             android:text="@string/second_date"/>
-
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,22 +36,26 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:layout_weight="2"
+                android:gravity="center"
                 android:text="@string/date_temp"
-                android:textSize="25sp"/>
+                android:textStyle="bold"
+                android:textSize="28sp"/>
             <TextView
                 android:id="@+id/date_wind"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@color/black"
                 android:layout_weight="2"
-                android:textStyle="italic"
                 android:text="@string/date_wind"
-                android:textSize="14dp"/>
+                android:textStyle="italic"
+                android:textSize="20sp"/>
             <ImageView
                 android:id="@+id/date_icon"
                 android:layout_width="0dp"
-                android:layout_height="70dp"
+                android:layout_height="60dp"
                 android:importantForAccessibility="no"
+                android:layout_gravity="center"
                 android:layout_weight="1"
                 android:src="@drawable/sun"/>
         </LinearLayout>
