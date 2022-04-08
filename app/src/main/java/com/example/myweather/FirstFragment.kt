@@ -10,10 +10,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
+import com.example.myweather.databinding.FragmentFirstBinding
+import com.example.myweather.model.CurrentWeather
 import com.example.myweather.utils.API_KEY
+import com.example.myweather.viewModels.CurrentWeatherViewModel
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONObject
 import java.net.URL
@@ -21,32 +26,39 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 private const val TAG = "FirstFragment"
-
 private var city = "Riga"
 private var baseUrlFirst =
     "https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$API_KEY"
-
 // https://api.openweathermap.org/data/2.5/weather?q=Riga&units=metric&appid=91db09ff13832921fd93739ff0fcc890
+
 private var lat = ""
 private var lon = ""
 
 class FirstFragment : Fragment() {
 
+    private lateinit var currentViewModel: CurrentWeatherViewModel
+    private lateinit var binding: FragmentFirstBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_first, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_first, container, false)
+        currentViewModel = ViewModelProvider(this).get(CurrentWeatherViewModel::class.java)
+        binding.lifecycleOwner = this
+        // viewModel declared in XML equals currentViewModel
+        binding.viewModel = currentViewModel
+
         // API call here
         GetWeather().execute()
         // Search function
-        val searchIcon = view.findViewById<ImageView>(R.id.search_icon)
+        val searchIcon = binding.root.findViewById<ImageView>(R.id.search_icon)
         searchIcon.setOnClickListener {
             SearchWeather().execute()
             Log.d(TAG, "Search Button clicked")
         }
         Log.d(TAG, "OnCreateView called")
-        return view
+        return binding.root
     }
 
     // Navigation to the SecondFragment
@@ -112,16 +124,16 @@ class FirstFragment : Fragment() {
 
                 val updatedAt: Long = jsonObj.getLong("dt")
                 val upDatedAtText =
-                    SimpleDateFormat("dd/MM/yyyy  HH:mm", Locale.ENGLISH).format(
+                    "Updated at: " + SimpleDateFormat("dd/MM/yyyy  HH:mm", Locale.ENGLISH).format(
                         Date(updatedAt * 1000)
-                    )
-                val temp = main.getString("temp")
-                val tempMin = main.getString("temp_min")
-                val tempMax = main.getString("temp_max")
-                val pressure = main.getString("pressure")
-                val humidity = main.getString("humidity")
+                    ) + "h"
+                val temp = main.getString("temp") + "°C"
+                val tempMin = "Min Temp: " + main.getString("temp_min") + "°C"
+                val tempMax = "Max Temp: " + main.getString("temp_max") + "°C"
+                val pressure = main.getString("pressure") + " hPa"
+                val humidity = main.getString("humidity") + " %"
 
-                val windSpeed = wind.getString("speed")
+                val windSpeed = wind.getString("speed") + " m/s"
                 val weatherDescription = weather.getString("description")
                 val address = jsonObj.getString("name") + ", " + sys.getString("country")
 
@@ -133,25 +145,20 @@ class FirstFragment : Fragment() {
                 lat = coord.getString("lat")
                 lon = coord.getString("lon")
 
-                /* Populating extracted data into the views */
-                requireActivity().findViewById<TextView>(R.id.city_name)?.text =
-                    resources.getString(R.string.city_name, address)
-                requireActivity().findViewById<TextView>(R.id.updated_time)?.text =
-                    resources.getString(R.string.last_updated, upDatedAtText)
-                requireActivity().findViewById<TextView>(R.id.conditions)?.text =
-                    resources.getString(R.string.conditions, weatherDescription)
-                requireActivity().findViewById<TextView>(R.id.temperature)?.text =
-                    resources.getString(R.string.current_temp, temp)
-                requireActivity().findViewById<TextView>(R.id.temp_min)?.text =
-                    resources.getString(R.string.temp_min, tempMin)
-                requireActivity().findViewById<TextView>(R.id.temp_max)?.text =
-                    resources.getString(R.string.temp_max, tempMax)
-                requireActivity().findViewById<TextView>(R.id.pressure)?.text =
-                    resources.getString(R.string.current_pressure, pressure)
-                requireActivity().findViewById<TextView>(R.id.wind_data)?.text =
-                    resources.getString(R.string.current_wind, windSpeed)
-                requireActivity().findViewById<TextView>(R.id.humidity_data)?.text =
-                    resources.getString(R.string.current_humidity, humidity + " %")
+                val currentWeather = CurrentWeather(
+                    address,
+                    upDatedAtText,
+                    temp,
+                    tempMin,
+                    tempMax,
+                    pressure,
+                    humidity,
+                    windSpeed,
+                    weatherDescription,
+                    lat,
+                    lon
+                )
+                currentViewModel.add(currentWeather)
 
                 // Image icon
                 Glide.with(context!!)
@@ -199,16 +206,16 @@ class FirstFragment : Fragment() {
 
                 val updatedAt: Long = jsonObj.getLong("dt")
                 val upDatedAtText =
-                    SimpleDateFormat("dd/MM/yyyy  HH:mm", Locale.ENGLISH).format(
+                    "Updated at: " + SimpleDateFormat("dd/MM/yyyy  HH:mm", Locale.ENGLISH).format(
                         Date(updatedAt * 1000)
-                    )
-                val temp = main.getString("temp")
-                val tempMin = main.getString("temp_min")
-                val tempMax = main.getString("temp_max")
-                val pressure = main.getString("pressure")
-                val humidity = main.getString("humidity")
+                    ) + "h"
+                val temp = main.getString("temp") + "°C"
+                val tempMin = "Min Temp: " + main.getString("temp_min") + "°C"
+                val tempMax = "Max Temp: " + main.getString("temp_max") + "°C"
+                val pressure = main.getString("pressure") + " hPa"
+                val humidity = main.getString("humidity") + " %"
 
-                val windSpeed = wind.getString("speed")
+                val windSpeed = wind.getString("speed") + " m/s"
                 val weatherDescription = weather.getString("description")
                 val address = jsonObj.getString("name") + ", " + sys.getString("country")
 
@@ -220,25 +227,20 @@ class FirstFragment : Fragment() {
                 lat = coord.getString("lat")
                 lon = coord.getString("lon")
 
-                /* Populating extracted data into the views */
-                requireActivity().findViewById<TextView>(R.id.city_name)?.text =
-                    resources.getString(R.string.city_name, address)
-                requireActivity().findViewById<TextView>(R.id.updated_time)?.text =
-                    resources.getString(R.string.last_updated, upDatedAtText)
-                requireActivity().findViewById<TextView>(R.id.conditions)?.text =
-                    resources.getString(R.string.conditions, weatherDescription)
-                requireActivity().findViewById<TextView>(R.id.temperature)?.text =
-                    resources.getString(R.string.current_temp, temp)
-                requireActivity().findViewById<TextView>(R.id.temp_min)?.text =
-                    resources.getString(R.string.temp_min, tempMin)
-                requireActivity().findViewById<TextView>(R.id.temp_max)?.text =
-                    resources.getString(R.string.temp_max, tempMax)
-                requireActivity().findViewById<TextView>(R.id.pressure)?.text =
-                    resources.getString(R.string.current_pressure, pressure)
-                requireActivity().findViewById<TextView>(R.id.wind_data)?.text =
-                    resources.getString(R.string.current_wind, windSpeed)
-                requireActivity().findViewById<TextView>(R.id.humidity_data)?.text =
-                    resources.getString(R.string.current_humidity, humidity + " %")
+                val currentWeather = CurrentWeather(
+                    address,
+                    upDatedAtText,
+                    temp,
+                    tempMin,
+                    tempMax,
+                    pressure,
+                    humidity,
+                    windSpeed,
+                    weatherDescription,
+                    lat,
+                    lon
+                )
+                currentViewModel.add(currentWeather)
 
                 // Image icon
                 Glide.with(context!!)

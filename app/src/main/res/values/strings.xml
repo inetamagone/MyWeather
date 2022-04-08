@@ -3,18 +3,9 @@
     <!-- FirstFragment -->
     <string name="enter_city_name">Enter City name</string>
     <string name="see_more">See More</string>
-    <string name="city_name">%1$s</string>
-    <string name="last_updated">Updated at: %1$sh</string>
-    <string name="conditions">%1$s</string>
-    <string name="current_temp">%1$s°C</string>
-    <string name="temp_min">Min Temp: %1$s°C</string>
-    <string name="temp_max">Max Temp: %1$s°C</string>
     <string name="wind_title">Wind</string>
-    <string name="current_wind">%1$s m/s</string>
     <string name="humidity_title">Humidity</string>
-    <string name="current_humidity">%1$s </string>
     <string name="pressure_title">Pressure</string>
-    <string name="current_pressure">%1$s hPa</string>
     <!-- SecondFragment -->
     <string name="weather_in_city">Weather in %1$s</string>
     <string name="second_date">%1$s</string>

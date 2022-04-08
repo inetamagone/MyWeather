@@ -24,7 +24,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 private const val TAG = "SecondFragment"
-
 private var lat: String = ""
 private var lon: String = ""
 
