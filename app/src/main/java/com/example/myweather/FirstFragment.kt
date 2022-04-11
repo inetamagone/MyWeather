@@ -16,8 +16,8 @@ import com.bumptech.glide.Glide
 import com.example.myweather.databinding.FragmentFirstBinding
 import com.example.myweather.model.CurrentWeather
 import com.example.myweather.network.ApiService
-import com.example.myweather.network.data.CurrentWeatherData
-import com.example.myweather.utils.BASE_URL_FIRST
+import com.example.myweather.network.currentData.CurrentWeatherData
+import com.example.myweather.utils.BASE_URL
 import com.example.myweather.viewModels.CurrentWeatherViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.squareup.moshi.Moshi
@@ -52,7 +52,7 @@ class FirstFragment : Fragment() {
         binding.viewModel = currentViewModel
 
         // API call here
-        searchWeather()
+        getWeather()
         // Search function
         val searchIcon = binding.root.findViewById<ImageView>(R.id.search_icon)
         searchIcon.setOnClickListener {
@@ -94,17 +94,94 @@ class FirstFragment : Fragment() {
         city = storedCity.toString()
         Log.d(TAG, "Restored city $storedCity")
     }
+
     // Using Retrofit and Moshi
-    private fun searchWeather() {
+    private fun getWeather() {
         val moshi = Moshi.Builder()
             .addLast(KotlinJsonAdapterFactory()).build()
         val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL_FIRST)
+            .baseUrl(BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
 
         val apiService: ApiService = retrofit.create(ApiService::class.java)
-        // Get the search query for city
+        // API request
+        apiService.getCurrentWeather().enqueue(
+            object : Callback<CurrentWeatherData> {
+                override fun onResponse(
+                    call: Call<CurrentWeatherData>,
+                    response: Response<CurrentWeatherData>
+                ) {
+                    Log.d(TAG, response.toString())
+                    if (!response.isSuccessful) {
+                        Log.d(TAG, "Unsuccessful network call")
+                        return
+                    }
+                    val body = response.body()!!
+                    /* Getting API data and sending to the currentViewModel */
+                    val updatedAt = body.dt.toLong()
+                    val upDatedAtText =
+                        "Updated at: " + SimpleDateFormat(
+                            "dd/MM/yyyy  HH:mm",
+                            Locale.ENGLISH
+                        ).format(
+                            Date(updatedAt * 1000)
+                        ) + "h"
+
+                    val address = body.name + ", " + body.sys.country
+                    val temp = body.main.temp.toString() + "°C"
+                    val tempMin = "Min Temp: " + body.main.tempMin + "°C"
+                    val tempMax = "Max Temp: " + body.main.tempMax + "°C"
+                    val pressure = body.main.pressure.toString() + " hPa"
+                    val humidity = body.main.humidity.toString() + " %"
+
+                    val windSpeed = body.wind.speed.toString() + " m/s"
+                    val weatherDescription = body.weather[0].description
+                    val icon = body.weather[0].icon
+                    val imageUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
+                    // http://openweathermap.org/img/wn/04d@2x.png
+
+                    // For the API call in the SecondFragment
+                    lat = body.coord.lat.toString()
+                    lon = body.coord.lon.toString()
+
+                    val currentWeather = CurrentWeather(
+                        address,
+                        upDatedAtText,
+                        temp,
+                        tempMin,
+                        tempMax,
+                        pressure,
+                        humidity,
+                        windSpeed,
+                        weatherDescription,
+                        lat,
+                        lon
+                    )
+                    currentViewModel.add(currentWeather)
+
+                    // Image icon
+                    Glide.with(context!!)
+                        .load(imageUrl)
+                        .into(view?.findViewById(R.id.image_main)!!)
+                }
+
+                override fun onFailure(call: Call<CurrentWeatherData>, t: Throwable) {
+                    Log.d(TAG, t.message ?: "Null message")
+                }
+            })
+    }
+
+    private fun searchWeather() {
+        val moshi = Moshi.Builder()
+            .addLast(KotlinJsonAdapterFactory()).build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+
+        val apiService: ApiService = retrofit.create(ApiService::class.java)
+        // Get the search query for the city
         city = getCity()
         // API request
         apiService.searchCurrentWeather(city).enqueue(
@@ -166,6 +243,7 @@ class FirstFragment : Fragment() {
                         .load(imageUrl)
                         .into(view?.findViewById(R.id.image_main)!!)
                 }
+
                 override fun onFailure(call: Call<CurrentWeatherData>, t: Throwable) {
                     Log.d(TAG, t.message ?: "Null message")
                 }

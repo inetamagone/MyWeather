@@ -1,7 +1,6 @@
 package com.example.myweather
 
 import android.annotation.SuppressLint
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,11 +13,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.adapter.DateViewAdapter
 import com.example.myweather.model.DateWeather
-import com.example.myweather.utils.API_KEY
+import com.example.myweather.network.ApiService
+import com.example.myweather.network.dateData.DateWeatherData
+import com.example.myweather.utils.BASE_URL
 import com.example.myweather.viewModels.DateViewModel
 import com.example.myweather.viewModels.DateViewModelFactory
-import org.json.JSONObject
-import java.net.URL
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -62,7 +68,8 @@ class SecondFragment : Fragment() {
         arrayList = viewModel.newList
 
         initialiseAdapter()
-        GetWeatherByDate().execute()
+        // API call
+        getWeatherByDate()
         Log.d(TAG, "OnCreateView Called")
         return view
     }
@@ -78,57 +85,51 @@ class SecondFragment : Fragment() {
         })
     }
 
-    inner class GetWeatherByDate() : AsyncTask<String, Void, String>() {
+    private fun getWeatherByDate() {
+        val moshi = Moshi.Builder()
+            .addLast(KotlinJsonAdapterFactory()).build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
 
-        private var baseUrlSecond =
-            "https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&units=metric&appid=$API_KEY"
-        // https://api.openweathermap.org/data/2.5/forecast?lat=57&lon=24.0833&units=metric&appid=91db09ff13832921fd93739ff0fcc890
+        val apiService: ApiService = retrofit.create(ApiService::class.java)
+        apiService.searchWeatherForecast(lat, lon).enqueue(
+            object : Callback<DateWeatherData> {
+                override fun onResponse(
+                    call: Call<DateWeatherData>,
+                    response: Response<DateWeatherData>
+                ) {
+                    Log.d(TAG, response.toString())
+                    if (!response.isSuccessful) {
+                        Log.d(TAG, "Unsuccessful network call")
+                        return
+                    }
+                    val body = response.body()!!
+                    val list = body.list
+                    for (element in list) {
+                        val main = element.main
+                        val temp = main.temp.toString()
 
-        override fun doInBackground(vararg params: String?): String? {
-            var response: String?
-            try {
-                response = URL(baseUrlSecond).readText(
-                    Charsets.UTF_8
-                )
-                Log.d(TAG, "doInBackground Called, $response")
-            } catch (e: Exception) {
-                Log.d(TAG, "doInBackground Catch Exception: $e")
-                response = null
-            }
-            return response
-        }
+                        val wind = element.wind
+                        val windSpeed = wind.speed.toString()
+                        val weatherArray = element.weather
+                        val weather = weatherArray[0]
+                        val iconId = weather.icon
+                        val dateText = element.dt.toLong()
 
-        override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
-            try {
-                /* Extracting JSON from the API */
-                //TODO Now when it works let simplify code by Moshi usage
-                val jsonObj = JSONObject(result)
-                val jsonList = jsonObj.getJSONArray("list")//.getJSONObject(0)
-                for (i in 0 until jsonList.length()) {
-                    val objects = jsonList.getJSONObject(i)
-                    val main: JSONObject = objects["main"] as JSONObject
-                    val temp = main.getString("temp")
-                    val wind: JSONObject = objects["wind"] as JSONObject
-                    val windSpeed = wind.getString("speed")
-                    val weatherArray = objects.getJSONArray("weather")
-                    val weather = weatherArray.getJSONObject(0)
-                    val iconId = weather.getString("icon")
-                    val dateText: Long = objects.getLong("dt")
-
-                    val dateTextFormatted =
-                        SimpleDateFormat("d MMM yyyy    HH:mm", Locale.ENGLISH).format(
-                            Date(dateText * 1000)
-                        )
-
-                    val dateWeatherData = DateWeather(dateTextFormatted, temp, windSpeed, iconId)
-                    viewModel.add(dateWeatherData)
+                        val dateTextFormatted =
+                            SimpleDateFormat("d MMM yyyy    HH:mm", Locale.ENGLISH).format(
+                                Date(dateText * 1000)
+                            )
+                        val dateWeatherData =
+                            DateWeather(dateTextFormatted, temp, windSpeed, iconId)
+                        viewModel.add(dateWeatherData)
+                    }
                 }
-
-                Log.d(TAG, "onPostExecute called")
-            } catch (e: Exception) {
-                Log.d(TAG, "Exception onPostExecute: $e")
-            }
-        }
+                override fun onFailure(call: Call<DateWeatherData>, t: Throwable) {
+                    Log.d(TAG, t.message ?: "Null message")
+                }
+            })
     }
 }

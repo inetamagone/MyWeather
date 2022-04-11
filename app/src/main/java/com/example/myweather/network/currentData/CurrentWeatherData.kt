@@ -1,4 +1,4 @@
-package com.example.myweather.network.data
+package com.example.myweather.network.currentData
 
 data class CurrentWeatherData(
     val coord: Coord,
