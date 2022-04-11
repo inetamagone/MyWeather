@@ -1,6 +1,14 @@
 package com.example.myweather.network.currentData
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(
+    tableName = "currentWeather"
+)
 data class CurrentWeatherData(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int? = null,
     val coord: Coord,
     val dt: Int,
     val main: Main,
