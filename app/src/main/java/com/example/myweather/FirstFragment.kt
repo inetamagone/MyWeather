@@ -1,7 +1,5 @@
 package com.example.myweather
 
-import android.annotation.SuppressLint
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,19 +15,23 @@ import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.example.myweather.databinding.FragmentFirstBinding
 import com.example.myweather.model.CurrentWeather
-import com.example.myweather.utils.API_KEY
+import com.example.myweather.network.ApiService
+import com.example.myweather.network.data.CurrentWeatherData
+import com.example.myweather.utils.BASE_URL_FIRST
 import com.example.myweather.viewModels.CurrentWeatherViewModel
 import com.google.android.material.textfield.TextInputEditText
-import org.json.JSONObject
-import java.net.URL
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
 
 private const val TAG = "FirstFragment"
-private var city = "Riga"
-private var baseUrlFirst =
-    "https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$API_KEY"
-// https://api.openweathermap.org/data/2.5/weather?q=Riga&units=metric&appid=91db09ff13832921fd93739ff0fcc890
+private var city = ""
 
 private var lat = ""
 private var lon = ""
@@ -42,7 +44,7 @@ class FirstFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_first, container, false)
         currentViewModel = ViewModelProvider(this).get(CurrentWeatherViewModel::class.java)
         binding.lifecycleOwner = this
@@ -50,11 +52,11 @@ class FirstFragment : Fragment() {
         binding.viewModel = currentViewModel
 
         // API call here
-        GetWeather().execute()
+        searchWeather()
         // Search function
         val searchIcon = binding.root.findViewById<ImageView>(R.id.search_icon)
         searchIcon.setOnClickListener {
-            SearchWeather().execute()
+            searchWeather()
             Log.d(TAG, "Search Button clicked")
         }
         Log.d(TAG, "OnCreateView called")
@@ -92,170 +94,86 @@ class FirstFragment : Fragment() {
         city = storedCity.toString()
         Log.d(TAG, "Restored city $storedCity")
     }
+    // Using Retrofit and Moshi
+    private fun searchWeather() {
+        val moshi = Moshi.Builder()
+            .addLast(KotlinJsonAdapterFactory()).build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL_FIRST)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
 
-    inner class GetWeather() : AsyncTask<String, Void, String>() {
+        val apiService: ApiService = retrofit.create(ApiService::class.java)
+        // Get the search query for city
+        city = getCity()
+        // API request
+        apiService.searchCurrentWeather(city).enqueue(
+            object : Callback<CurrentWeatherData> {
+                override fun onResponse(
+                    call: Call<CurrentWeatherData>,
+                    response: Response<CurrentWeatherData>
+                ) {
+                    Log.d(TAG, response.toString())
+                    if (!response.isSuccessful) {
+                        Log.d(TAG, "Unsuccessful network call")
+                        return
+                    }
+                    val body = response.body()!!
+                    /* Getting API data and sending to the currentViewModel */
+                    val updatedAt = body.dt.toLong()
+                    val upDatedAtText =
+                        "Updated at: " + SimpleDateFormat(
+                            "dd/MM/yyyy  HH:mm",
+                            Locale.ENGLISH
+                        ).format(
+                            Date(updatedAt * 1000)
+                        ) + "h"
 
-        override fun doInBackground(vararg params: String?): String? {
-            var response: String?
-            try {
-                response = URL(baseUrlFirst).readText(
-                    Charsets.UTF_8
-                )
-                Log.d(TAG, "get from URL - City: $city")
-                Log.d(TAG, "get from URL Called: $response")
-            } catch (e: Exception) {
-                Log.d(TAG, "doInBackground Catch Exception: $e")
-                response = null
-            }
-            return response
-        }
+                    val address = body.name + ", " + body.sys.country
+                    val temp = body.main.temp.toString() + "°C"
+                    val tempMin = "Min Temp: " + body.main.tempMin + "°C"
+                    val tempMax = "Max Temp: " + body.main.tempMax + "°C"
+                    val pressure = body.main.pressure.toString() + " hPa"
+                    val humidity = body.main.humidity.toString() + " %"
 
-        @SuppressLint("StringFormatMatches", "StringFormatInvalid")
-        override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
-            try {
-                /* Extracting JSON from the API */
-                val jsonObj = JSONObject(result)
-                val main = jsonObj.getJSONObject("main")
-                val sys = jsonObj.getJSONObject("sys")
-                val wind = jsonObj.getJSONObject("wind")
-                val coord = jsonObj.getJSONObject("coord")
-                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
+                    val windSpeed = body.wind.speed.toString() + " m/s"
+                    val weatherDescription = body.weather[0].description
+                    val icon = body.weather[0].icon
+                    val imageUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
+                    // http://openweathermap.org/img/wn/04d@2x.png
 
-                val updatedAt: Long = jsonObj.getLong("dt")
-                val upDatedAtText =
-                    "Updated at: " + SimpleDateFormat("dd/MM/yyyy  HH:mm", Locale.ENGLISH).format(
-                        Date(updatedAt * 1000)
-                    ) + "h"
-                val temp = main.getString("temp") + "°C"
-                val tempMin = "Min Temp: " + main.getString("temp_min") + "°C"
-                val tempMax = "Max Temp: " + main.getString("temp_max") + "°C"
-                val pressure = main.getString("pressure") + " hPa"
-                val humidity = main.getString("humidity") + " %"
+                    // For the API call in the SecondFragment
+                    lat = body.coord.lat.toString()
+                    lon = body.coord.lon.toString()
 
-                val windSpeed = wind.getString("speed") + " m/s"
-                val weatherDescription = weather.getString("description")
-                val address = jsonObj.getString("name") + ", " + sys.getString("country")
+                    val currentWeather = CurrentWeather(
+                        address,
+                        upDatedAtText,
+                        temp,
+                        tempMin,
+                        tempMax,
+                        pressure,
+                        humidity,
+                        windSpeed,
+                        weatherDescription,
+                        lat,
+                        lon
+                    )
+                    currentViewModel.add(currentWeather)
 
-                val icon = weather.getString("icon")
-                val imageUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
-                // http://openweathermap.org/img/wn/04d@2x.png
-
-                // For the API call in the SecondFragment
-                lat = coord.getString("lat")
-                lon = coord.getString("lon")
-
-                val currentWeather = CurrentWeather(
-                    address,
-                    upDatedAtText,
-                    temp,
-                    tempMin,
-                    tempMax,
-                    pressure,
-                    humidity,
-                    windSpeed,
-                    weatherDescription,
-                    lat,
-                    lon
-                )
-                currentViewModel.add(currentWeather)
-
-                // Image icon
-                Glide.with(context!!)
-                    .load(imageUrl)
-                    .into(view?.findViewById<ImageView>(R.id.image_main)!!)
-
-                Log.d(TAG, "onPostExecute Called - got JSON and populated views")
-            } catch (e: Exception) {
-                Log.d(TAG, "Exception: $e")
-            }
-        }
+                    // Image icon
+                    Glide.with(context!!)
+                        .load(imageUrl)
+                        .into(view?.findViewById(R.id.image_main)!!)
+                }
+                override fun onFailure(call: Call<CurrentWeatherData>, t: Throwable) {
+                    Log.d(TAG, t.message ?: "Null message")
+                }
+            })
     }
 
-    inner class SearchWeather() : AsyncTask<String, Void, String>() {
-
-        private var CITY = getCity()
-        val BASE_URL_FIRST =
-            "https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API_KEY"
-
-        override fun doInBackground(vararg params: String?): String? {
-            var response: String?
-            try {
-                response = URL(BASE_URL_FIRST).readText(
-                    Charsets.UTF_8
-                )
-                Log.d(TAG, "get from URL search method: $response")
-            } catch (e: Exception) {
-                Log.d(TAG, "doInBackground Catch Exception: $e")
-                response = null
-            }
-            return response
-        }
-
-        @SuppressLint("StringFormatMatches", "StringFormatInvalid")
-        override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
-            try {
-                /* Extracting JSON from the API */
-                val jsonObj = JSONObject(result)
-                val main = jsonObj.getJSONObject("main")
-                val sys = jsonObj.getJSONObject("sys")
-                val wind = jsonObj.getJSONObject("wind")
-                val coord = jsonObj.getJSONObject("coord")
-                val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
-
-                val updatedAt: Long = jsonObj.getLong("dt")
-                val upDatedAtText =
-                    "Updated at: " + SimpleDateFormat("dd/MM/yyyy  HH:mm", Locale.ENGLISH).format(
-                        Date(updatedAt * 1000)
-                    ) + "h"
-                val temp = main.getString("temp") + "°C"
-                val tempMin = "Min Temp: " + main.getString("temp_min") + "°C"
-                val tempMax = "Max Temp: " + main.getString("temp_max") + "°C"
-                val pressure = main.getString("pressure") + " hPa"
-                val humidity = main.getString("humidity") + " %"
-
-                val windSpeed = wind.getString("speed") + " m/s"
-                val weatherDescription = weather.getString("description")
-                val address = jsonObj.getString("name") + ", " + sys.getString("country")
-
-                val icon = weather.getString("icon")
-                val imageUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
-                // http://openweathermap.org/img/wn/04d@2x.png
-
-                // For the API call in the SecondFragment
-                lat = coord.getString("lat")
-                lon = coord.getString("lon")
-
-                val currentWeather = CurrentWeather(
-                    address,
-                    upDatedAtText,
-                    temp,
-                    tempMin,
-                    tempMax,
-                    pressure,
-                    humidity,
-                    windSpeed,
-                    weatherDescription,
-                    lat,
-                    lon
-                )
-                currentViewModel.add(currentWeather)
-
-                // Image icon
-                Glide.with(context!!)
-                    .load(imageUrl)
-                    .into(view?.findViewById<ImageView>(R.id.image_main)!!)
-
-                Log.d(TAG, "onPostExecute Called - got JSON and populated views")
-            } catch (e: Exception) {
-                Log.d(TAG, "Exception: $e")
-            }
-        }
-    }
-
-    fun getCity(): String {
-        val editCity = view?.findViewById<TextInputEditText>(R.id.edit_city)
+    private fun getCity(): String {
+        val editCity = requireActivity().findViewById<TextInputEditText>(R.id.edit_city)
         if (editCity?.text.isNullOrEmpty()) {
             city = "Riga"
         } else {
