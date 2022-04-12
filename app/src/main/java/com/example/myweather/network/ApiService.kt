@@ -1,9 +1,11 @@
 package com.example.myweather.network
 
+import com.example.myweather.model.WeatherResponse
 import com.example.myweather.network.currentData.CurrentWeatherData
 import com.example.myweather.network.dateData.DateWeatherData
 import com.example.myweather.utils.API_KEY
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -20,7 +22,7 @@ interface ApiService {
         unitName: String = "metric",
         @Query("appid")
         apiKey: String = API_KEY
-    ): Call<CurrentWeatherData>
+    ): Response<WeatherResponse>
 
     @GET("data/2.5/weather")
     fun searchCurrentWeather(
@@ -30,7 +32,7 @@ interface ApiService {
         unitName: String = "metric",
         @Query("appid")
         apiKey: String = API_KEY
-    ): Call<CurrentWeatherData>
+    ): Response<WeatherResponse>
 
     // SecondFragment
     @GET("data/2.5/forecast")

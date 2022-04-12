@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.myweather.FirstFragment
 import com.example.myweather.network.currentData.CurrentWeatherData
 
 @Database(
@@ -14,25 +15,27 @@ import com.example.myweather.network.currentData.CurrentWeatherData
 @TypeConverters(Converters::class)
 abstract class WeatherDatabase : RoomDatabase() {
     abstract fun getWeatherDao(): WeatherDao
-
+    // Singleton class, visible to other classes
     companion object {
         // Changes can be seen immediately
         @Volatile
         // Recreate the instance of database
-        private var instance: WeatherDatabase? = null
-        // Synchronize setting the instance
-        private val lock = Any()
-        // There is no other thread that sets the same instance. Verify if null and set the instance to the result of function createDatabase
-        operator fun invoke(context: Context) = instance ?: synchronized(lock) {
-            instance ?: createDatabase(context).also { instance = it }
-        }
-        // Instance of db class will be used to access WeatherDao and its functions
+        var INSTANCE: WeatherDatabase? = null
 
-        private fun createDatabase(context: Context) =
-            Room.databaseBuilder(
-                context.applicationContext,
-                WeatherDatabase::class.java,
-                "currentWeather_db.db"
-            ).build()
+        fun createDatabase(context: FirstFragment): WeatherDatabase {
+            val tempInstance = INSTANCE
+            if(tempInstance != null) {
+                return tempInstance
+            }
+            synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.requireContext().applicationContext,
+                    WeatherDatabase::class.java,
+                    "current_weather"
+                ).build()
+                INSTANCE = instance
+                return instance
+            }
+        }
     }
 }

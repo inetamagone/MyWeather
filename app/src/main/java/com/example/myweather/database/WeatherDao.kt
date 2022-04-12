@@ -8,11 +8,11 @@ import com.example.myweather.network.currentData.CurrentWeatherData
 interface WeatherDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(currentWeather: CurrentWeatherData): Long
+    suspend fun upsert(currentWeatherData: CurrentWeatherData): Long
 
-    @Query("SELECT * FROM currentWeather")
-    fun getSearchHistory(): LiveData<List<CurrentWeatherData>>
+    @Query("SELECT * FROM current_weather")
+    fun getAllWeather(): LiveData<List<CurrentWeatherData>>
 
     @Delete
-    suspend fun deleteOneSearch(currentWeather: CurrentWeatherData)
+    suspend fun deleteOneSearch(currentWeatherData: CurrentWeatherData)
 }

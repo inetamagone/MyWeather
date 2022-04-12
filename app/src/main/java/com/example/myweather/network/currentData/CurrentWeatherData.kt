@@ -2,9 +2,10 @@ package com.example.myweather.network.currentData
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(
-    tableName = "currentWeather"
+    tableName = "current_weather"
 )
 data class CurrentWeatherData(
     @PrimaryKey(autoGenerate = true)
@@ -17,4 +18,4 @@ data class CurrentWeatherData(
     val visibility: Int,
     val weather: List<Weather>,
     val wind: Wind
-)
+) : Serializable
