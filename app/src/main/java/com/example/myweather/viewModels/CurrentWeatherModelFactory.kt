@@ -8,7 +8,7 @@ class CurrentWeatherModelFactory(
     val currentWeatherRepository: CurrentWeatherRepository
 ) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return CurrentWeatherViewModel(currentWeatherRepository) as T
     }
 }

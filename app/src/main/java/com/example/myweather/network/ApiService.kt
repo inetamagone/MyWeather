@@ -1,7 +1,6 @@
 package com.example.myweather.network
 
 import com.example.myweather.model.WeatherResponse
-import com.example.myweather.network.currentData.CurrentWeatherData
 import com.example.myweather.network.dateData.DateWeatherData
 import com.example.myweather.utils.API_KEY
 import retrofit2.Call
@@ -15,7 +14,7 @@ import retrofit2.http.Query
 interface ApiService {
     // FirstFragment
     @GET("data/2.5/weather")
-    fun getCurrentWeather(
+    suspend fun getCurrentWeather(
         @Query("q")
         defaultCity: String = "Riga",
         @Query("units")

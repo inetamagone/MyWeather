@@ -10,7 +10,8 @@ import com.example.myweather.network.currentData.CurrentWeatherData
 
 @Database(
     entities = [CurrentWeatherData::class],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class WeatherDatabase : RoomDatabase() {
@@ -29,7 +30,7 @@ abstract class WeatherDatabase : RoomDatabase() {
             }
             synchronized(this) {
                 val instance = Room.databaseBuilder(
-                    context.requireContext().applicationContext,
+                    context.requireContext(),
                     WeatherDatabase::class.java,
                     "current_weather"
                 ).build()

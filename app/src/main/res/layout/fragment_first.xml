@@ -64,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:saveEnabled="false"
-                    android:text="@{viewModel.currentList.address}"
+                    android:text="@{viewModel.currentWeatherFromDb.address}"
                     android:textColor="@color/black"
                     android:textSize="34sp"
                     android:layout_marginBottom="5dp" />
@@ -73,7 +73,7 @@
                     android:id="@+id/updated_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.currentList.valUpdatedAtText}"
+                    android:text="@{viewModel.currentWeatherFromDb.valUpdatedAtText}"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
@@ -97,7 +97,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@{viewModel.currentList.weatherDescription}"
+                    android:text="@{viewModel.currentWeatherFromDb.weatherDescription}"
                     android:textSize="18dp" />
 
                 <TextView
@@ -105,7 +105,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@{viewModel.currentList.temp}"
+                    android:text="@{viewModel.currentWeatherFromDb.temp}"
                     android:textSize="65sp" />
 
                 <LinearLayout
@@ -118,7 +118,7 @@
                         android:id="@+id/temp_min"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{viewModel.currentList.tempMin}" />
+                        android:text="@{viewModel.currentWeatherFromDb.tempMin}" />
 
                     <Space
                         android:layout_width="50dp"
@@ -128,7 +128,7 @@
                         android:id="@+id/temp_max"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{viewModel.currentList.tempMax}" />
+                        android:text="@{viewModel.currentWeatherFromDb.tempMax}" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -176,7 +176,7 @@
                             android:id="@+id/wind_data"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{viewModel.currentList.windSpeed}"
+                            android:text="@{viewModel.currentWeatherFromDb.windSpeed}"
                             android:textSize="14dp" />
                     </LinearLayout>
 
@@ -212,7 +212,7 @@
                             android:id="@+id/humidity_data"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{viewModel.currentList.humidity}"
+                            android:text="@{viewModel.currentWeatherFromDb.humidity}"
                             android:textSize="14dp" />
                     </LinearLayout>
 
@@ -254,7 +254,7 @@
                             android:id="@+id/pressure"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{viewModel.currentList.pressure}"
+                            android:text="@{viewModel.currentWeatherFromDb.pressure}"
                             android:textSize="14dp" />
                     </LinearLayout>
 

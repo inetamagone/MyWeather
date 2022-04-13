@@ -1,5 +1,6 @@
 package com.example.myweather.model
 
+// Class used after getting FirstFragment data from db, passing it to the view list in viewModel
 data class CurrentWeather (
     val address: String,
     val valUpdatedAtText: String,

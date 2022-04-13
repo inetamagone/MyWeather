@@ -1,9 +1,9 @@
 package com.example.myweather.viewModels
 
-
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myweather.model.CurrentWeather
 import com.example.myweather.model.WeatherResponse
 import com.example.myweather.network.currentData.CurrentWeatherData
 import com.example.myweather.repository.CurrentWeatherRepository
@@ -61,5 +61,11 @@ class CurrentWeatherViewModel(
 
     fun deleteWeather(currentWeatherData: CurrentWeatherData) = viewModelScope.launch {
         currentWeatherRepository.deleteWeather(currentWeatherData)
+    }
+
+    // After getting data from database, displaying in the views
+    var currentWeatherFromDb = MutableLiveData<CurrentWeather>()
+    fun add(currentWeather: CurrentWeather) {
+        currentWeatherFromDb.value = currentWeather
     }
 }

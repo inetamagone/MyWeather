@@ -10,7 +10,7 @@ class CurrentWeatherRepository(
     suspend fun getCurrentWeather() =
         RetrofitInstance.api.getCurrentWeather()
 
-    suspend fun searchCurrentWeather(searchQuery: String) =
+    fun searchCurrentWeather(searchQuery: String) =
         RetrofitInstance.api.searchCurrentWeather(searchQuery)
 
     suspend fun upsert(currentWeatherData: CurrentWeatherData) = database.getWeatherDao().upsert(currentWeatherData)
