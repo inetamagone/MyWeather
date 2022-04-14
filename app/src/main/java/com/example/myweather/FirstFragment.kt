@@ -15,7 +15,6 @@ import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.example.myweather.database.currentWeather.WeatherDatabase
 import com.example.myweather.databinding.FragmentFirstBinding
-import com.example.myweather.model.CurrentWeather
 import com.example.myweather.repository.CurrentWeatherRepository
 import com.example.myweather.utils.Resource
 import com.example.myweather.viewModels.currentWeather.CurrentWeatherModelFactory
@@ -25,6 +24,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 private const val TAG = "FirstFragment"
+private const val DEFAULT_CITY = "Riga"
 
 private var lat = ""
 private var lon = ""
@@ -148,15 +148,8 @@ class FirstFragment : Fragment() {
     }
 
     private fun getCity(): String {
-        var city = ""
-        val editCity = requireActivity().findViewById<TextInputEditText>(R.id.edit_city)
-        if (editCity?.text.isNullOrEmpty()) {
-            city = "Riga"
-        } else {
-            city = editCity?.text.toString()
-            Log.v(TAG, "Change cityName: $city")
-            editCity?.setText("")
+        requireActivity().findViewById<TextInputEditText>(R.id.edit_city).apply {
+            return if (text.isNullOrBlank()) DEFAULT_CITY else text.toString()
         }
-        return city
     }
 }
