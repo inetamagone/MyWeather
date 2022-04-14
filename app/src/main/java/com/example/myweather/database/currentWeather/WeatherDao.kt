@@ -1,4 +1,4 @@
-package com.example.myweather.database
+package com.example.myweather.database.currentWeather
 
 import androidx.lifecycle.LiveData
 import androidx.room.*

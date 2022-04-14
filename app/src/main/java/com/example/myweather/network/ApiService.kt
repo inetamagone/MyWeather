@@ -1,9 +1,8 @@
 package com.example.myweather.network
 
+import com.example.myweather.model.DateWeatherResponse
 import com.example.myweather.model.WeatherResponse
-import com.example.myweather.network.dateData.DateWeatherData
 import com.example.myweather.utils.API_KEY
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -44,5 +43,5 @@ interface ApiService {
         unitName: String = "metric",
         @Query("appid")
         apiKey: String = API_KEY
-    ): Call<DateWeatherData>
+    ): Response<DateWeatherResponse>
 }

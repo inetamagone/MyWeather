@@ -13,13 +13,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
-import com.example.myweather.database.WeatherDatabase
+import com.example.myweather.database.currentWeather.WeatherDatabase
 import com.example.myweather.databinding.FragmentFirstBinding
 import com.example.myweather.model.CurrentWeather
 import com.example.myweather.repository.CurrentWeatherRepository
 import com.example.myweather.utils.Resource
-import com.example.myweather.viewModels.CurrentWeatherModelFactory
-import com.example.myweather.viewModels.CurrentWeatherViewModel
+import com.example.myweather.viewModels.currentWeather.CurrentWeatherModelFactory
+import com.example.myweather.viewModels.currentWeather.CurrentWeatherViewModel
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
 import java.util.*

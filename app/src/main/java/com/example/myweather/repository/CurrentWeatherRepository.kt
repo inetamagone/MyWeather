@@ -1,6 +1,6 @@
 package com.example.myweather.repository
 
-import com.example.myweather.database.WeatherDatabase
+import com.example.myweather.database.currentWeather.WeatherDatabase
 import com.example.myweather.network.RetrofitInstance
 import com.example.myweather.network.currentData.CurrentWeatherData
 
