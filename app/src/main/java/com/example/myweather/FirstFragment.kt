@@ -50,7 +50,7 @@ class FirstFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_first, container, false)
         binding.lifecycleOwner = this
         // viewModel declared in XML equals currentViewModel
-        binding.viewModel = currentViewModel
+        //binding.viewModel = currentViewModel
 
         // Search function
         val searchIcon = binding.root.findViewById<ImageView>(R.id.search_icon)
@@ -72,9 +72,49 @@ class FirstFragment : Fragment() {
                 when (response) {
                     is Resource.Success -> {
                         response.data?.let { weatherResponse ->
-                            val apiData = weatherResponse.weatherList[0]
-                            // Save data to database
-                            currentViewModel.saveWeather(apiData)
+                            // TODO: Assign weatherResponse to currentViewModel.currentList
+                            val list = weatherResponse.weatherList
+
+                            val body = list[0]
+                            val updatedAt = body.dt.toLong()
+                            val upDatedAtText =
+                                "Updated at: " + SimpleDateFormat(
+                                    "dd/MM/yyyy  HH:mm",
+                                    Locale.ENGLISH
+                                ).format(
+                                    Date(updatedAt * 1000)
+                                ) + "h"
+
+                            val address = body.name + ", " + body.sys.country
+                            val temp = body.main.temp.toString() + "°C"
+                            val tempMin = "Min Temp: " + body.main.tempMin + "°C"
+                            val tempMax = "Max Temp: " + body.main.tempMax + "°C"
+                            val pressure = body.main.pressure.toString() + " hPa"
+                            val humidity = body.main.humidity.toString() + " %"
+
+                            val windSpeed = body.wind.speed.toString() + " m/s"
+                            val weatherDescription = body.weather[0].description
+                            val icon = body.weather[0].icon
+                            val imageUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
+                            // http://openweathermap.org/img/wn/04d@2x.png
+
+                            // For the API call in the SecondFragment
+                            lat = body.coord.lat.toString()
+                            lon = body.coord.lon.toString()
+
+                            binding.cityName.text = address
+                            binding.temperature.text = temp
+                            binding.tempMin.text = tempMin
+                            binding.tempMax.text = tempMax
+                            binding.pressure.text = pressure
+                            binding.humidityData.text = humidity
+                            binding.windData.text = windSpeed
+                            binding.conditions.text = weatherDescription
+
+                            // Image icon
+                            Glide.with(requireContext())
+                                .load(imageUrl)
+                                .into(view?.findViewById(R.id.image_main)!!)
                         }
                     }
                     is Resource.Error -> {
@@ -87,59 +127,6 @@ class FirstFragment : Fragment() {
                     }
                 }
             })
-
-        // Get data from database
-        val weather = currentViewModel.getSavedWeather()
-        // TODO: The problem is HERE
-        weather.observe(viewLifecycleOwner, androidx.lifecycle.Observer { currentWeather ->
-            val body = currentWeather[0]
-            val updatedAt = body.dt.toLong()
-            val upDatedAtText =
-                "Updated at: " + SimpleDateFormat(
-                    "dd/MM/yyyy  HH:mm",
-                    Locale.ENGLISH
-                ).format(
-                    Date(updatedAt * 1000)
-                ) + "h"
-
-            val address = body.name + ", " + body.sys.country
-            val temp = body.main.temp.toString() + "°C"
-            val tempMin = "Min Temp: " + body.main.tempMin + "°C"
-            val tempMax = "Max Temp: " + body.main.tempMax + "°C"
-            val pressure = body.main.pressure.toString() + " hPa"
-            val humidity = body.main.humidity.toString() + " %"
-
-            val windSpeed = body.wind.speed.toString() + " m/s"
-            val weatherDescription = body.weather[0].description
-            val icon = body.weather[0].icon
-            val imageUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
-            // http://openweathermap.org/img/wn/04d@2x.png
-
-            // For the API call in the SecondFragment
-            lat = body.coord.lat.toString()
-            lon = body.coord.lon.toString()
-
-            val currentWeather = CurrentWeather(
-                address,
-                upDatedAtText,
-                temp,
-                tempMin,
-                tempMax,
-                pressure,
-                humidity,
-                windSpeed,
-                weatherDescription,
-                lat,
-                lon
-            )
-            currentViewModel.add(currentWeather)
-
-            // Image icon
-            Glide.with(requireContext())
-                .load(imageUrl)
-                .into(view?.findViewById(R.id.image_main)!!)
-
-        })
     }
 
     // Navigation to the SecondFragment

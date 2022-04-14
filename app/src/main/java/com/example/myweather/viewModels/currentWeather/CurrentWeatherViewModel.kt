@@ -15,8 +15,8 @@ class CurrentWeatherViewModel(
     private val currentWeatherRepository: CurrentWeatherRepository
 ): ViewModel() {
 
-    val currentList: MutableLiveData<Resource<WeatherResponse>> = MutableLiveData()
-    val searchList: MutableLiveData<Resource<WeatherResponse>> = MutableLiveData()
+    var currentList: MutableLiveData<Resource<WeatherResponse>> = MutableLiveData()
+    var searchList: MutableLiveData<Resource<WeatherResponse>> = MutableLiveData()
 
    init {
        getCurrentWeather()
@@ -64,8 +64,8 @@ class CurrentWeatherViewModel(
     }
 
     // After getting data from database, displaying in the views
-    var currentWeatherFromDb = MutableLiveData<CurrentWeather>()
-    fun add(currentWeather: CurrentWeather) {
-        currentWeatherFromDb.value = currentWeather
-    }
+//    var currentWeatherFromDb = MutableLiveData<CurrentWeather>()
+//    fun add(currentWeather: CurrentWeather) {
+//        currentWeatherFromDb.value = currentWeather
+//    }
 }
