@@ -11,13 +11,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.adapter.HistoryViewAdapter
-import com.example.myweather.viewModels.CurrentWeatherViewModel
+import com.example.myweather.viewModels.WeatherViewModel
 
 private const val TAG = "HistoryFragment"
 
 class HistoryFragment : Fragment() {
 
-    private lateinit var currentViewModel: CurrentWeatherViewModel
+    private lateinit var viewModel: WeatherViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,13 +25,13 @@ class HistoryFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_history, container, false)
 
-        currentViewModel = ViewModelProvider(this)[CurrentWeatherViewModel::class.java]
+        viewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
         val recyclerView = view.findViewById<RecyclerView>(R.id.history_recycler_view)
         val adapter = HistoryViewAdapter()
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        currentViewModel.getAllHistory(requireContext())
+        viewModel.getAllHistory(requireContext())
             .observe(viewLifecycleOwner) { history ->
                 if (history == null) {
                     Log.d(TAG, "History data was not found!")
@@ -62,7 +62,7 @@ class HistoryFragment : Fragment() {
     private fun deleteAllHistory(context: Context) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setPositiveButton("OK") { _, _ ->
-            currentViewModel.deleteAllHistory(context)
+            viewModel.deleteAllHistory(context)
             Toast.makeText(
                 requireContext(),
                 "All Weather History is removed",

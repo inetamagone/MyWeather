@@ -3,20 +3,20 @@ package com.example.myweather.viewModels
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bumptech.glide.load.engine.Resource
-import com.example.myweather.FirstFragment
-import com.example.myweather.model.CurrentWeather
 import com.example.myweather.network.currentData.CurrentWeatherData
+import com.example.myweather.network.dateData.DateWeatherData
 import com.example.myweather.repository.CurrentWeatherRepository
+import com.example.myweather.repository.DateWeatherRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CurrentWeatherViewModel : ViewModel() {
+class WeatherViewModel : ViewModel() {
     lateinit var currentList: LiveData<CurrentWeatherData>
-    lateinit var historyList: LiveData<List<CurrentWeatherData>>
+    lateinit var weatherList: LiveData<List<CurrentWeatherData>>
+    lateinit var dateWeatherList: LiveData<List<DateWeatherData>>
+
 
     fun getCurrentWeatherApi(context: Context) {
         viewModelScope.launch {
@@ -44,13 +44,24 @@ class CurrentWeatherViewModel : ViewModel() {
 
     // History Fragment
     fun getAllHistory(context: Context): LiveData<List<CurrentWeatherData>> {
-        historyList = CurrentWeatherRepository.getHistory(context)
-        return historyList
+        weatherList = CurrentWeatherRepository.getHistory(context)
+        return weatherList
     }
 
     fun deleteAllHistory(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             CurrentWeatherRepository.deleteAllHistory(context)
         }
+    }
+
+    // Second Fragment
+    fun getDateWeatherApi(context: Context, lat: String, lon: String) {
+        viewModelScope.launch {
+            DateWeatherRepository.getDateWeatherApi(context, lat, lon)
+        }
+    }
+    fun getAllByDate(context: Context): LiveData<List<DateWeatherData>> {
+        dateWeatherList = DateWeatherRepository.getDbByDate(context)
+        return dateWeatherList
     }
 }

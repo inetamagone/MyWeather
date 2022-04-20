@@ -17,6 +17,7 @@ interface CurrentWeatherDao {
     @Query("SELECT * FROM current_weather WHERE name = :searchQuery")
     fun getWeatherSearchFromDb(searchQuery: String): LiveData<CurrentWeatherData>
 
+    // History Fragment
     @Query("SELECT * FROM current_weather ORDER BY dt DESC")
     fun getHistory(): LiveData<List<CurrentWeatherData>>
 

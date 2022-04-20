@@ -19,7 +19,7 @@ private const val TAG = "HistoryViewAdapter"
 
 class HistoryViewAdapter : RecyclerView.Adapter<HistoryViewAdapter.HistoryViewHolder>(){
 
-    private val userComparatorDifferCallback = object : DiffUtil.ItemCallback<CurrentWeatherData>() {
+    private val weatherComparatorDifferCallback = object : DiffUtil.ItemCallback<CurrentWeatherData>() {
         override fun areItemsTheSame(oldItem: CurrentWeatherData, newItem: CurrentWeatherData): Boolean {
             return oldItem === newItem
         }
@@ -29,7 +29,7 @@ class HistoryViewAdapter : RecyclerView.Adapter<HistoryViewAdapter.HistoryViewHo
         }
     }
 
-    val differ = AsyncListDiffer(this, userComparatorDifferCallback)
+    val differ = AsyncListDiffer(this, weatherComparatorDifferCallback)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -71,7 +71,6 @@ class HistoryViewAdapter : RecyclerView.Adapter<HistoryViewAdapter.HistoryViewHo
                 .into(binding.findViewById(R.id.history_icon))
         }
     }
-
     override fun getItemCount(): Int {
         return differ.currentList.size
     }

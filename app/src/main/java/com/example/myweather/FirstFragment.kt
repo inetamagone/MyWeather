@@ -15,20 +15,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.example.myweather.databinding.FragmentFirstBinding
-import com.example.myweather.model.CurrentWeather
-import com.example.myweather.network.ApiService
-import com.example.myweather.network.currentData.CurrentWeatherData
-import com.example.myweather.utils.BASE_URL
 import com.example.myweather.utils.DEFAULT_CITY
-import com.example.myweather.viewModels.CurrentWeatherViewModel
+import com.example.myweather.viewModels.WeatherViewModel
 import com.google.android.material.textfield.TextInputEditText
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,7 +29,7 @@ private var lon = ""
 
 class FirstFragment : Fragment() {
 
-    private lateinit var currentViewModel: CurrentWeatherViewModel
+    private lateinit var viewModel: WeatherViewModel
     private lateinit var binding: FragmentFirstBinding
 
     @SuppressLint("SetTextI18n")
@@ -49,7 +38,7 @@ class FirstFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_first, container, false)
-        currentViewModel = ViewModelProvider(this)[CurrentWeatherViewModel::class.java]
+        viewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
         binding.lifecycleOwner = this
 
 
@@ -64,10 +53,10 @@ class FirstFragment : Fragment() {
 
 
         // Here making API call, getting data from database, observing currentList and populating into the views
-        currentViewModel.getCurrentWeatherApi(requireContext())
-        val dbData = currentViewModel.getDataFromDb(requireContext())
+        viewModel.getCurrentWeatherApi(requireContext())
+        val dbData = viewModel.getDataFromDb(requireContext())
         Log.d(TAG, "onLaunch DBdata on launch: $dbData")
-        currentViewModel.currentList.observe(viewLifecycleOwner) {
+        viewModel.currentList.observe(viewLifecycleOwner) {
             if (it == null) {
                 Log.d(TAG, "Data was not found onLaunch")
             } else {
@@ -120,11 +109,11 @@ class FirstFragment : Fragment() {
         searchIcon.setOnClickListener {
             Log.d(TAG, "Search Button clicked")
             city = getCity()
-            val searchApi = currentViewModel.searchCurrentWeatherApi(requireContext(), city)
+            val searchApi = viewModel.searchCurrentWeatherApi(requireContext(), city)
             Log.d(TAG, "SearchApi called: $searchApi")
-            val dbData = currentViewModel.getSearchFromDb(requireContext(), city)
+            val dbData = viewModel.getSearchFromDb(requireContext(), city)
             Log.d(TAG, "Search DbData called: $dbData")
-            currentViewModel.currentList.observe(viewLifecycleOwner) {
+            viewModel.currentList.observe(viewLifecycleOwner) {
                 if (it == null) {
                     Log.d(TAG, "Data was not found in search")
                 } else {
