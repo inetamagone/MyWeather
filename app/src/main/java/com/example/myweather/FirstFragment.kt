@@ -65,10 +65,12 @@ class FirstFragment : Fragment() {
         // Here making API call, getting data from database, observing currentList and populating into the views
         currentViewModel.getCurrentWeatherApi(requireContext())
         val dbData = currentViewModel.getDataFromDb(requireContext())
+        Log.d(TAG, "onLaunch DBdata on launch: $dbData")
         currentViewModel.currentList.observe(viewLifecycleOwner) {
             if (it == null) {
                 Log.d(TAG, "Data was not found")
             } else {
+                Log.d(TAG, "onLaunch DBdata found to populate: $it")
                 val updatedAt = it.dt.toLong()
                 val icon = it.weather[0].icon
                 val imageUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
@@ -115,14 +117,17 @@ class FirstFragment : Fragment() {
         // Search function
         val searchIcon = binding.root.findViewById<ImageView>(R.id.search_icon)
         searchIcon.setOnClickListener {
+            Log.d(TAG, "Search Button clicked")
             city = getCity()
-            currentViewModel.searchCurrentWeatherApi(requireContext(), city)
-            currentViewModel.getDataFromDb(requireContext())
+            val searchApi = currentViewModel.searchCurrentWeatherApi(requireContext(), city)
+            Log.d(TAG, "SearchApi called: $searchApi")
+            val dbData = currentViewModel.getDataFromDb(requireContext())
+            Log.d(TAG, "Search DbData called: $dbData")
             currentViewModel.currentList.observe(viewLifecycleOwner) {
                 if (it == null) {
                     Log.d(TAG, "Data was not found")
                 } else {
-                    /* Getting API data and sending to the currentViewModel */
+                    Log.d(TAG, "Search CurrentWeatherData it got: $it")
                     val updatedAt = it.dt.toLong()
                     val icon = it.weather[0].icon
                     val imageUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
@@ -161,11 +166,10 @@ class FirstFragment : Fragment() {
                     Glide.with(requireContext())
                         .load(imageUrl)
                         .into(view?.findViewById(R.id.image_main)!!)
-                    Log.d(TAG, "So I found searched data...")
+                    Log.d(TAG, "So I populated searched data...")
                 }
 
             }
-            Log.d(TAG, "Search Button clicked")
         }
 
 
