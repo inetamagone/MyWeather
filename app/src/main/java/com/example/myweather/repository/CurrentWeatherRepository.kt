@@ -1,6 +1,7 @@
 package com.example.myweather.repository
 
 import android.content.Context
+import android.os.AsyncTask
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -20,59 +21,92 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
+private const val TAG = "Repository"
+
 class CurrentWeatherRepository {
     companion object {
 
         lateinit var database: CurrentWeatherDatabase
         lateinit var weatherDataFromDb: LiveData<CurrentWeatherData>
 
-            fun getCurrentWeatherApi() {
-                val moshi = Moshi.Builder()
-                    .addLast(KotlinJsonAdapterFactory()).build()
-                val retrofit = Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(MoshiConverterFactory.create(moshi))
-                    .build()
+        fun getCurrentWeatherApi(context: Context) {
+            val moshi = Moshi.Builder()
+                .addLast(KotlinJsonAdapterFactory()).build()
+            val retrofit = Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
+                .build()
 
-                val apiService: ApiService = retrofit.create(ApiService::class.java)
-                // API request
-                apiService.getCurrentWeather().enqueue(
-                    object : Callback<CurrentWeatherData> {
-                        override fun onResponse(
-                            call: Call<CurrentWeatherData>,
-                            response: Response<CurrentWeatherData>
-                        ) {
-                            Log.d("Repository", response.toString())
-                            if (!response.isSuccessful) {
-                                Log.d("Repository", "Unsuccessful network call")
-                                return
-                            }
-                            val apiResponseData = response.body()!!
-                            CoroutineScope(Dispatchers.IO).launch {
-                                database.getWeatherDao().insertData(apiResponseData)
-                            }
+            val apiService: ApiService = retrofit.create(ApiService::class.java)
+            // API request
+            apiService.getCurrentWeather().enqueue(
+                object : Callback<CurrentWeatherData> {
+                    override fun onResponse(
+                        call: Call<CurrentWeatherData>,
+                        response: Response<CurrentWeatherData>
+                    ) {
+                        Log.d(TAG, response.toString())
+                        if (!response.isSuccessful) {
+                            Log.d(TAG, "Unsuccessful network call")
+                            return
                         }
-                        override fun onFailure(call: Call<CurrentWeatherData>, t: Throwable) {
-                            Log.d("Repository", t.message ?: "Null message")
+                        val apiResponseData = response.body()!!
+                        CoroutineScope(Dispatchers.IO).launch {
+                            insertData(context, apiResponseData)
                         }
-                    })
-            }
+                    }
+                    override fun onFailure(call: Call<CurrentWeatherData>, t: Throwable) {
+                        Log.d(TAG, t.message ?: "Null message")
+                    }
+                })
+        }
 
+        fun searchCurrentWeatherApi(context: Context, searchQuery: String) {
+            val moshi = Moshi.Builder()
+                .addLast(KotlinJsonAdapterFactory()).build()
+            val retrofit = Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
+                .build()
 
-        fun searchCurrentWeatherApi(searchQuery: String) {
-            RetrofitInstance.api.searchCurrentWeather(searchQuery)
+            val apiService: ApiService = retrofit.create(ApiService::class.java)
+            // API request
+            apiService.searchCurrentWeather(searchQuery).enqueue(
+                object : Callback<CurrentWeatherData> {
+                    override fun onResponse(
+                        call: Call<CurrentWeatherData>,
+                        response: Response<CurrentWeatherData>
+                    ) {
+                        Log.d(TAG, "City name: $searchQuery")
+                        Log.d(TAG, response.toString())
+                        if (!response.isSuccessful) {
+                            Log.d(TAG, "Unsuccessful network call")
+                            return
+                        }
+                        val apiResponseData = response.body()!!
+
+                        CoroutineScope(Dispatchers.IO).launch {
+                            insertData(context, apiResponseData)
+                        }
+                    }
+                    override fun onFailure(call: Call<CurrentWeatherData>, t: Throwable) {
+                        Log.d(TAG, t.message ?: "Null message")
+                    }
+                })
         }
 
         suspend fun insertData(context: Context, currentWeatherData: CurrentWeatherData) {
             database = initializeDB(context)
             CoroutineScope(Dispatchers.IO).launch {
                 database.getWeatherDao().insertData(currentWeatherData)
+                Log.d(TAG,  "Data inserted into db: $currentWeatherData")
             }
         }
 
         fun getWeatherDataFromDb(context: Context): LiveData<CurrentWeatherData> {
             database = initializeDB(context)
             weatherDataFromDb = database.getWeatherDao().getWeatherDataFromDb()
+            Log.d(TAG,  "Data got back from db: $weatherDataFromDb")
             return weatherDataFromDb
         }
 

@@ -1,11 +1,13 @@
 package com.example.myweather.viewModels
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.load.engine.Resource
+import com.example.myweather.FirstFragment
 import com.example.myweather.model.CurrentWeather
 import com.example.myweather.network.currentData.CurrentWeatherData
 import com.example.myweather.repository.CurrentWeatherRepository
@@ -13,20 +15,23 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CurrentWeatherViewModel : ViewModel() {
-    private var currentList: LiveData<CurrentWeatherData>? = null
+    lateinit var currentList: LiveData<CurrentWeatherData>
 
-    init {
-        getCurrentWeatherApi()
+    fun getCurrentWeatherApi(context: Context) {
+        viewModelScope.launch {
+            CurrentWeatherRepository.getCurrentWeatherApi(context)
+        }
     }
 
-    private fun getCurrentWeatherApi() {
+    fun searchCurrentWeatherApi(context: Context, searchQuery: String) {
         viewModelScope.launch {
-            CurrentWeatherRepository.getCurrentWeatherApi()
+            CurrentWeatherRepository.searchCurrentWeatherApi(context, searchQuery)
         }
     }
 
     fun getDataFromDb(context: Context): LiveData<CurrentWeatherData> {
         currentList = CurrentWeatherRepository.getWeatherDataFromDb(context)
-        return currentList as LiveData<CurrentWeatherData>
+        Log.d("ViewModel",  "Data got back from db: $currentList")
+        return currentList
     }
 }
