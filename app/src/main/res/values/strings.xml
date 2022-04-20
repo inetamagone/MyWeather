@@ -11,5 +11,13 @@
     <string name="second_date">%1$s</string>
     <string name="date_temp">%1$s°C</string>
     <string name="date_wind">Wind: %1$s m/s</string>
+    <string name="history_btn">My weather history</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="history_city">Riga</string>
+    <string name="history_date">April 20, 2022</string>
+    <string name="history_temp">25 C</string>
+    <string name="history_wind">Wind: 4 m/s</string>
+    <string name="delete_btn">Delete</string>
 
 </resources>

@@ -63,7 +63,7 @@ class SecondFragment : Fragment() {
         lon = lonString.toString()
 
         val factory = DateViewModelFactory()
-        viewModel = ViewModelProvider(this, factory).get(DateViewModel::class.java)
+        viewModel = ViewModelProvider(this, factory)[DateViewModel::class.java]
         dateRecycler = view.findViewById(R.id.recycler_view)
         arrayList = viewModel.newList
 

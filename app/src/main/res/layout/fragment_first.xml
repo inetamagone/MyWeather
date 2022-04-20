@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,7 +18,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:orientation="horizontal"
                 android:padding="5dp">
 
@@ -60,7 +60,7 @@
                     android:saveEnabled="false"
                     android:text="Riga"
                     android:textColor="@color/black"
-                    android:textSize="34sp"
+                    android:textSize="32sp"
                     android:layout_marginBottom="5dp" />
 
                 <TextView
@@ -73,8 +73,8 @@
 
                 <ImageView
                     android:id="@+id/image_main"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
                     android:layout_gravity="center"
                     android:src="@drawable/sun" />
             </LinearLayout>
@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="25 C"
-                    android:textSize="65sp" />
+                    android:textSize="45sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -132,83 +132,99 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
+                android:layout_marginTop="15dp"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/details_layout1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
                     android:orientation="horizontal"
                     android:weightSum="2">
 
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@color/light_color"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <ImageView
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:src="@drawable/wind" />
-
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="5dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
+                        app:cardBackgroundColor="@color/light_color"
+                        app:cardCornerRadius="10dp"
+                        android:layout_weight="1">
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/wind_title"
-                            android:textSize="12dp" />
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp">
 
-                        <TextView
-                            android:id="@+id/wind_data"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="4 m/s"
-                            android:textSize="14dp" />
-                    </LinearLayout>
+                            <ImageView
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:src="@drawable/wind" />
+
+                            <Space
+                                android:layout_width="wrap_content"
+                                android:layout_height="5dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/wind_title"
+                                android:textSize="12dp" />
+
+                            <TextView
+                                android:id="@+id/wind_data"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="4 m/s"
+                                android:textSize="14dp" />
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
 
                     <Space
                         android:layout_width="10dp"
                         android:layout_height="wrap_content" />
 
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/light_color"
+                        app:cardCornerRadius="10dp"
                         android:layout_weight="1"
-                        android:background="@color/light_color"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <ImageView
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:src="@drawable/humidity" />
-
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="5dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
+                        android:padding="5dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/humidity_title"
-                            android:textSize="12dp" />
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp">
 
-                        <TextView
-                            android:id="@+id/humidity_data"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="20 %"
-                            android:textSize="14dp" />
-                    </LinearLayout>
+                            <ImageView
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:src="@drawable/humidity" />
+
+                            <Space
+                                android:layout_width="wrap_content"
+                                android:layout_height="5dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/humidity_title"
+                                android:textSize="12dp" />
+
+                            <TextView
+                                android:id="@+id/humidity_data"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="20 %"
+                                android:textSize="14dp" />
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
 
                 </LinearLayout>
 
@@ -216,54 +232,80 @@
                     android:id="@+id/details_layout2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:orientation="horizontal"
+                    android:gravity="center"
                     android:weightSum="2">
 
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/light_color"
+                        app:cardCornerRadius="10dp"
+                        android:layout_weight="1"
+                        android:padding="5dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp">
+
+                            <ImageView
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:src="@drawable/pressure" />
+
+                            <Space
+                                android:layout_width="wrap_content"
+                                android:layout_height="5dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/pressure_title"
+                                android:textSize="12dp" />
+
+                            <TextView
+                                android:id="@+id/pressure"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="4 hPa"
+                                android:textSize="14dp" />
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+                    <Space
+                        android:layout_width="10dp"
+                        android:layout_height="wrap_content" />
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@color/light_color"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
+                        android:weightSum="2"
+                        android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:src="@drawable/pressure" />
+                        <Button
+                            android:id="@+id/button_next"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="@string/see_more"
+                            android:textSize="13sp" />
 
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="5dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/pressure_title"
-                            android:textSize="12dp" />
-
-                        <TextView
-                            android:id="@+id/pressure"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="4 hPa"
-                            android:textSize="14dp" />
+                        <Button
+                            android:id="@+id/button_history"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/history_btn"
+                            android:textSize="12sp"
+                            android:gravity="center"
+                            android:textColor="@color/black"
+                            android:backgroundTint="@color/purple_200" />
                     </LinearLayout>
-
-                    <Space
-                        android:layout_width="10dp"
-                        android:layout_height="wrap_content" />
-
-                    <Button
-                        android:id="@+id/button_next"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="@string/see_more"
-                        android:gravity="center"
-                        android:padding="8dp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

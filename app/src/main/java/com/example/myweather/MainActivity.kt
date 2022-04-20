@@ -11,7 +11,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate Called")
-        supportActionBar?.hide() // Hide statusBar
         setContentView(R.layout.activity_main)
     }
 }

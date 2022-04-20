@@ -265,14 +265,31 @@
                         android:layout_width="10dp"
                         android:layout_height="wrap_content" />
 
-                    <Button
-                        android:id="@+id/button_next"
+                    <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/see_more"
-                        android:gravity="center"
-                        android:padding="8dp" />
+                        android:weightSum="2"
+                        android:orientation="vertical">
+                        <Button
+                            android:id="@+id/button_next"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/see_more"
+                            android:textSize="13sp"
+                            android:gravity="center" />
+                        <Button
+                            android:id="@+id/button_history"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/history_btn"
+                            android:textSize="12sp"
+                            android:gravity="center"
+                            android:textColor="@color/black"
+                            android:backgroundTint="@color/purple_200" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

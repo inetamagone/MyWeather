@@ -28,6 +28,7 @@ class CurrentWeatherRepository {
 
         lateinit var database: CurrentWeatherDatabase
         lateinit var weatherDataFromDb: LiveData<CurrentWeatherData>
+        lateinit var historyDataList: LiveData<List<CurrentWeatherData>>
 
         fun getCurrentWeatherApi(context: Context) {
             val moshi = Moshi.Builder()
@@ -110,8 +111,28 @@ class CurrentWeatherRepository {
             return weatherDataFromDb
         }
 
+        fun getWeatherSearchFromDb(context: Context, searchQuery: String): LiveData<CurrentWeatherData> {
+            database = initializeDB(context)
+            weatherDataFromDb = database.getWeatherDao().getWeatherSearchFromDb(searchQuery)
+            Log.d(TAG,  "Data got back from db: $weatherDataFromDb")
+            return weatherDataFromDb
+        }
+
         private fun initializeDB(context: Context): CurrentWeatherDatabase {
             return CurrentWeatherDatabase.createDatabase(context)
+        }
+
+        // History Fragment
+        fun getHistory(context: Context): LiveData<List<CurrentWeatherData>> {
+            database = initializeDB(context)
+
+            historyDataList = database.getWeatherDao().getHistory()
+            return historyDataList
+        }
+
+        suspend fun deleteAllHistory(context: Context){
+            database = initializeDB(context)
+            database.getWeatherDao().deleteAllHistory()
         }
     }
 }

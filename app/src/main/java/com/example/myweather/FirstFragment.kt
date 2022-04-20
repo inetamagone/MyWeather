@@ -19,6 +19,7 @@ import com.example.myweather.model.CurrentWeather
 import com.example.myweather.network.ApiService
 import com.example.myweather.network.currentData.CurrentWeatherData
 import com.example.myweather.utils.BASE_URL
+import com.example.myweather.utils.DEFAULT_CITY
 import com.example.myweather.viewModels.CurrentWeatherViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.squareup.moshi.Moshi
@@ -68,7 +69,7 @@ class FirstFragment : Fragment() {
         Log.d(TAG, "onLaunch DBdata on launch: $dbData")
         currentViewModel.currentList.observe(viewLifecycleOwner) {
             if (it == null) {
-                Log.d(TAG, "Data was not found")
+                Log.d(TAG, "Data was not found onLaunch")
             } else {
                 Log.d(TAG, "onLaunch DBdata found to populate: $it")
                 val updatedAt = it.dt.toLong()
@@ -121,11 +122,11 @@ class FirstFragment : Fragment() {
             city = getCity()
             val searchApi = currentViewModel.searchCurrentWeatherApi(requireContext(), city)
             Log.d(TAG, "SearchApi called: $searchApi")
-            val dbData = currentViewModel.getDataFromDb(requireContext())
+            val dbData = currentViewModel.getSearchFromDb(requireContext(), city)
             Log.d(TAG, "Search DbData called: $dbData")
             currentViewModel.currentList.observe(viewLifecycleOwner) {
                 if (it == null) {
-                    Log.d(TAG, "Data was not found")
+                    Log.d(TAG, "Data was not found in search")
                 } else {
                     Log.d(TAG, "Search CurrentWeatherData it got: $it")
                     val updatedAt = it.dt.toLong()
@@ -185,11 +186,19 @@ class FirstFragment : Fragment() {
                 putString("lonString", lon)
             })
         }
+
+        // Search function
+        val historyButton = view.findViewById<Button>(R.id.button_history)
+        historyButton.setOnClickListener {
+            Log.d(TAG, "History Button clicked")
+
+            navController.navigate(R.id.action_firstFragment_to_historyFragment, Bundle())
+        }
     }
 
     private fun getCity(): String {
         requireActivity().findViewById<TextInputEditText>(R.id.edit_city).apply {
-            return if (text.isNullOrBlank()) "Riga" else text.toString()
+            return if (text.isNullOrBlank()) DEFAULT_CITY else text.toString()
         }
     }
 }
