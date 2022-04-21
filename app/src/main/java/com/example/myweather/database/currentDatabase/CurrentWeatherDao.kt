@@ -10,7 +10,6 @@ interface CurrentWeatherDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertData(currentWeatherData: CurrentWeatherData)
 
-    // Select the last entry
     @Query("SELECT * FROM current_weather WHERE dt = (SELECT MAX(dt) FROM current_weather)")
     fun getWeatherDataFromDb(): LiveData<CurrentWeatherData>
 

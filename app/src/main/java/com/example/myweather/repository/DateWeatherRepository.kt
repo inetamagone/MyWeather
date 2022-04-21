@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.myweather.database.dateDatabase.DateWeatherDatabase
 import com.example.myweather.network.ApiService
+import com.example.myweather.network.dateData.DataList
 import com.example.myweather.network.dateData.DateWeatherData
 import com.example.myweather.utils.BASE_URL
 import com.squareup.moshi.Moshi
@@ -25,7 +26,7 @@ class DateWeatherRepository {
     companion object {
 
         lateinit var database: DateWeatherDatabase
-        lateinit var dateWeatherDataList: LiveData<List<DateWeatherData>>
+        lateinit var dateWeatherDataList: LiveData<List<DataList>>
 
         // Second Fragment
         fun getDateWeatherApi(context: Context, lat: String, lon: String) {
@@ -47,38 +48,36 @@ class DateWeatherRepository {
                             Log.d(TAG, "Unsuccessful network call")
                             return
                         }
+                        val list = response.body()!!.list
 
-                        Log.d(TAG, "$response")
-//                        val list = apiResponse.list
-//                        // TODO: Correction here
-//                        for (i in 0 until apiResponseList.size) {
-//                            CoroutineScope(Dispatchers.IO).launch {
-//                                insertDataByDate(context, apiResponse)
-//                            }
-//                        }
+                        for (element in list) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                insertDataByDate(context, element)
+                            }
+                        }
                     }
+
                     override fun onFailure(call: Call<DateWeatherData>, t: Throwable) {
                         Log.d(TAG, t.message ?: "Null message")
                     }
                 })
         }
 
-        suspend fun insertDataByDate(context: Context, dateWeatherData: DateWeatherData) {
+        suspend fun insertDataByDate(context: Context, dataList: DataList) {
             database = initializeDateDB(context)
             CoroutineScope(Dispatchers.IO).launch {
-               database.getDateWeatherDao().insertDataByDate(dateWeatherData)
-                Log.d(TAG, "Data inserted into db: $dateWeatherData")
+                database.getDateWeatherDao().insertDataByDate(dataList)
+                Log.d(TAG, "Data inserted into db: $dataList")
             }
         }
 
-        fun getDbByDate(context: Context): LiveData<List<DateWeatherData>> {
+        fun getDbByDate(context: Context): LiveData<List<DataList>> {
             database = initializeDateDB(context)
-
-           dateWeatherDataList = database.getDateWeatherDao().getByDate()
+            dateWeatherDataList = database.getDateWeatherDao().getByDate()
             return dateWeatherDataList
         }
 
-        suspend fun deleteAll(context: Context){
+        suspend fun deleteAll(context: Context) {
             database = initializeDateDB(context)
             database.getDateWeatherDao().deleteAll()
         }

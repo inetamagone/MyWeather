@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myweather.R
-import com.example.myweather.network.dateData.DateWeatherData
+import com.example.myweather.network.dateData.DataList
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,12 +17,12 @@ class DateViewAdapter(
 ) :
     RecyclerView.Adapter<DateViewAdapter.DateViewHolder>() {
 
-    private val weatherComparatorDifferCallback = object : DiffUtil.ItemCallback<DateWeatherData>() {
-        override fun areItemsTheSame(oldItem: DateWeatherData, newItem: DateWeatherData): Boolean {
+    private val weatherComparatorDifferCallback = object : DiffUtil.ItemCallback<DataList>() {
+        override fun areItemsTheSame(oldItem: DataList, newItem: DataList): Boolean {
             return oldItem === newItem
         }
 
-        override fun areContentsTheSame(oldItem: DateWeatherData, newItem: DateWeatherData): Boolean {
+        override fun areContentsTheSame(oldItem: DataList, newItem: DataList): Boolean {
             return oldItem.id == newItem.id
         }
     }
@@ -43,28 +43,29 @@ class DateViewAdapter(
     }
 
     inner class DateViewHolder(private val binding: View) : RecyclerView.ViewHolder(binding) {
-        fun bind(dateWeatherData: DateWeatherData) {
-            val weatherDate = dateWeatherData.list[0].dt.toLong()
+        fun bind(dataList: DataList) {
+            val weatherDate = dataList.dt.toLong()
             val dateTextFormatted =
                 SimpleDateFormat("d MMM yyyy    HH:mm", Locale.ENGLISH).format(
                     Date(weatherDate * 1000)
-                ) + "h"
+                )
 
             binding.findViewById<TextView>(R.id.date_text).text =
                 binding.resources.getString(R.string.second_date, dateTextFormatted)
             binding.findViewById<TextView>(R.id.date_temp).text =
-                binding.resources.getString(R.string.date_temp, dateWeatherData.list[0].main.temp.toString() + "°C")
+                binding.resources.getString(R.string.date_temp, dataList.main.temp.toString())
             binding.findViewById<TextView>(R.id.date_wind).text =
-                binding.resources.getString(R.string.date_wind, dateWeatherData.list[0].wind.speed.toString())
+                binding.resources.getString(R.string.date_wind, dataList.wind.speed.toString())
 
             // Setting picture icon
-            val imageUrl = "https://openweathermap.org/img/wn/${dateWeatherData.list[0].weather[0].icon}@2x.png"
+            val imageUrl = "https://openweathermap.org/img/wn/${dataList.weather[0].icon}@2x.png"
 
             Glide.with(binding)
                 .load(imageUrl)
                 .into(binding.findViewById(R.id.date_icon))
         }
     }
+
     override fun getItemCount(): Int {
         return differ.currentList.size
     }

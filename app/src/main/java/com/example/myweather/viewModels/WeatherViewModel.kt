@@ -6,16 +6,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myweather.network.currentData.CurrentWeatherData
-import com.example.myweather.network.dateData.DateWeatherData
+import com.example.myweather.network.dateData.DataList
 import com.example.myweather.repository.CurrentWeatherRepository
 import com.example.myweather.repository.DateWeatherRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+const val TAG = "WeatherViewModel"
+
 class WeatherViewModel : ViewModel() {
     lateinit var currentList: LiveData<CurrentWeatherData>
     lateinit var weatherList: LiveData<List<CurrentWeatherData>>
-    lateinit var dateWeatherList: LiveData<List<DateWeatherData>>
+    lateinit var dateWeatherList: LiveData<List<DataList>>
 
 
     fun getCurrentWeatherApi(context: Context) {
@@ -32,13 +34,13 @@ class WeatherViewModel : ViewModel() {
 
     fun getDataFromDb(context: Context): LiveData<CurrentWeatherData> {
         currentList = CurrentWeatherRepository.getWeatherDataFromDb(context)
-        Log.d("ViewModel",  "Data got back from db: $currentList")
+        Log.d(TAG, "Data got back from db: $currentList")
         return currentList
     }
 
     fun getSearchFromDb(context: Context, searchQuery: String): LiveData<CurrentWeatherData> {
         currentList = CurrentWeatherRepository.getWeatherSearchFromDb(context, searchQuery)
-        Log.d("ViewModel",  "Data got back from db: $currentList")
+        Log.d(TAG, "Data got back from db: $currentList")
         return currentList
     }
 
@@ -60,7 +62,8 @@ class WeatherViewModel : ViewModel() {
             DateWeatherRepository.getDateWeatherApi(context, lat, lon)
         }
     }
-    fun getAllByDate(context: Context): LiveData<List<DateWeatherData>> {
+
+    fun getAllByDate(context: Context): LiveData<List<DataList>> {
         dateWeatherList = DateWeatherRepository.getDbByDate(context)
         return dateWeatherList
     }

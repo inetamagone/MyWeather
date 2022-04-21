@@ -1,8 +1,12 @@
 package com.example.myweather.network.dateData
 
 import androidx.room.Embedded
+import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+@Entity(
+    tableName = "date_weather"
+)
 data class DataList(
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null,

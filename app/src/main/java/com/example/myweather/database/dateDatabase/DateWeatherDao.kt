@@ -5,16 +5,16 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.myweather.network.dateData.DateWeatherData
+import com.example.myweather.network.dateData.DataList
 
 @Dao
 interface DateWeatherDao {
-    // Second Fragment
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertDataByDate(dateWeatherData: DateWeatherData)
 
-    @Query("SELECT * FROM date_weather ORDER BY id DESC")
-    fun getByDate(): LiveData<List<DateWeatherData>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDataByDate(dataList: DataList)
+
+    @Query("SELECT * FROM date_weather ORDER BY dt ASC")
+    fun getByDate(): LiveData<List<DataList>>
 
     @Query("DELETE FROM date_weather")
     suspend fun deleteAll()

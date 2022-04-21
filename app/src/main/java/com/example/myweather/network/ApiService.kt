@@ -22,6 +22,7 @@ interface ApiService {
         @Query("appid")
         apiKey: String = API_KEY
     ): Call<CurrentWeatherData>
+
     @GET("data/2.5/weather")
     fun searchCurrentWeather(
         @Query("q")
@@ -38,7 +39,7 @@ interface ApiService {
         @Query("lat")
         latString: String,
         @Query("lon")
-        lonstring: String,
+        lonString: String,
         @Query("units")
         unitName: String = "metric",
         @Query("appid")

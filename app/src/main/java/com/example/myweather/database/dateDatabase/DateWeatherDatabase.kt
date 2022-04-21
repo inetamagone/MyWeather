@@ -6,10 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.myweather.database.currentDatabase.CurrentWeatherDao
+import com.example.myweather.network.dateData.DataList
 import com.example.myweather.network.dateData.DateWeatherData
 
 @Database(
-    entities = [DateWeatherData::class],
+    entities = [DataList::class],
     version = 1,
     exportSchema = false
 )
@@ -24,14 +25,14 @@ abstract class DateWeatherDatabase : RoomDatabase() {
 
         fun createDatabase(context: Context): DateWeatherDatabase {
             val tempInstance = INSTANCE
-            if(tempInstance != null) {
+            if (tempInstance != null) {
                 return tempInstance
             }
             synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     DateWeatherDatabase::class.java,
-                    "date_weather_db"
+                    "date_weather_database"
                 ).build()
                 INSTANCE = instance
                 return instance

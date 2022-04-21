@@ -35,7 +35,7 @@
                 android:textColor="@color/black"
                 android:layout_weight="2"
                 android:text="@string/date_temp"
-                android:textSize="25sp"/>
+                android:textSize="25sp" />
             <TextView
                 android:id="@+id/date_wind"
                 android:layout_width="0dp"

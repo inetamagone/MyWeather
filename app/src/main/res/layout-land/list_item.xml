@@ -39,7 +39,7 @@
                 android:gravity="center"
                 android:text="@string/date_temp"
                 android:textStyle="bold"
-                android:textSize="28sp"/>
+                android:textSize="20sp"/>
             <TextView
                 android:id="@+id/date_wind"
                 android:layout_width="0dp"

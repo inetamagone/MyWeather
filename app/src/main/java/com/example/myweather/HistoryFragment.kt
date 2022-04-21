@@ -42,7 +42,6 @@ class HistoryFragment : Fragment() {
                     }
                 }
             }
-
         // Add menu
         setHasOptionsMenu(true)
 
@@ -53,12 +52,14 @@ class HistoryFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.delete_menu, menu)
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_delete) {
             deleteAllHistory(requireContext())
         }
         return super.onOptionsItemSelected(item)
     }
+
     private fun deleteAllHistory(context: Context) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setPositiveButton("OK") { _, _ ->

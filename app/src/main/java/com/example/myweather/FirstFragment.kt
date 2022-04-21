@@ -23,7 +23,6 @@ import java.util.*
 
 private const val TAG = "FirstFragment"
 private var city = ""
-
 private var lat = ""
 private var lon = ""
 
@@ -41,16 +40,13 @@ class FirstFragment : Fragment() {
         viewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
         binding.lifecycleOwner = this
 
-
         Log.d(TAG, "OnCreateView called")
         return binding.root
     }
 
-    // Navigation to the SecondFragment
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         // Here making API call, getting data from database, observing currentList and populating into the views
         viewModel.getCurrentWeatherApi(requireContext())
@@ -98,7 +94,7 @@ class FirstFragment : Fragment() {
                 // Image icon
                 Glide.with(requireContext())
                     .load(imageUrl)
-                    .into(view?.findViewById(R.id.image_main)!!)
+                    .into(view.findViewById(R.id.image_main)!!)
                 Log.d(TAG, "So I found data...")
             }
 
@@ -155,14 +151,14 @@ class FirstFragment : Fragment() {
                     // Image icon
                     Glide.with(requireContext())
                         .load(imageUrl)
-                        .into(view?.findViewById(R.id.image_main)!!)
+                        .into(view.findViewById(R.id.image_main)!!)
                     Log.d(TAG, "So I populated searched data...")
                 }
 
             }
         }
 
-
+        // Navigation to the Second Fragment
         val navController = Navigation.findNavController(view)
 
         view.findViewById<Button>(R.id.button_next).setOnClickListener {

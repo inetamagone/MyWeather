@@ -1,7 +1,6 @@
 package com.example.myweather.adapter
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,19 +14,24 @@ import com.example.myweather.network.currentData.CurrentWeatherData
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val TAG = "HistoryViewAdapter"
+class HistoryViewAdapter : RecyclerView.Adapter<HistoryViewAdapter.HistoryViewHolder>() {
 
-class HistoryViewAdapter : RecyclerView.Adapter<HistoryViewAdapter.HistoryViewHolder>(){
+    private val weatherComparatorDifferCallback =
+        object : DiffUtil.ItemCallback<CurrentWeatherData>() {
+            override fun areItemsTheSame(
+                oldItem: CurrentWeatherData,
+                newItem: CurrentWeatherData
+            ): Boolean {
+                return oldItem === newItem
+            }
 
-    private val weatherComparatorDifferCallback = object : DiffUtil.ItemCallback<CurrentWeatherData>() {
-        override fun areItemsTheSame(oldItem: CurrentWeatherData, newItem: CurrentWeatherData): Boolean {
-            return oldItem === newItem
+            override fun areContentsTheSame(
+                oldItem: CurrentWeatherData,
+                newItem: CurrentWeatherData
+            ): Boolean {
+                return oldItem.dt == newItem.dt
+            }
         }
-
-        override fun areContentsTheSame(oldItem: CurrentWeatherData, newItem: CurrentWeatherData): Boolean {
-            return oldItem.dt == newItem.dt
-        }
-    }
 
     val differ = AsyncListDiffer(this, weatherComparatorDifferCallback)
 
@@ -52,8 +56,6 @@ class HistoryViewAdapter : RecyclerView.Adapter<HistoryViewAdapter.HistoryViewHo
             val historyTemp = currentWeatherData.main.temp.toString()
             val historyWind = currentWeatherData.wind.speed.toString()
             val historyIcon = currentWeatherData.weather[0].icon
-            val historyId = currentWeatherData.id
-            Log.d(TAG, "History id: $historyId")
             val dateTextFormatted =
                 SimpleDateFormat("d MMM yyyy    HH:mm", Locale.ENGLISH).format(
                     Date(historyDate * 1000)
@@ -71,6 +73,7 @@ class HistoryViewAdapter : RecyclerView.Adapter<HistoryViewAdapter.HistoryViewHo
                 .into(binding.findViewById(R.id.history_icon))
         }
     }
+
     override fun getItemCount(): Int {
         return differ.currentList.size
     }

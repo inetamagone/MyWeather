@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.myweather.FirstFragment
 import com.example.myweather.network.currentData.CurrentWeatherData
 
 @Database(
@@ -16,6 +15,7 @@ import com.example.myweather.network.currentData.CurrentWeatherData
 @TypeConverters(Converters::class)
 abstract class CurrentWeatherDatabase : RoomDatabase() {
     abstract fun getWeatherDao(): CurrentWeatherDao
+
     // Singleton class, visible to other classes
     companion object {
         // Changes can be seen immediately
@@ -25,7 +25,7 @@ abstract class CurrentWeatherDatabase : RoomDatabase() {
 
         fun createDatabase(context: Context): CurrentWeatherDatabase {
             val tempInstance = INSTANCE
-            if(tempInstance != null) {
+            if (tempInstance != null) {
                 return tempInstance
             }
             synchronized(this) {

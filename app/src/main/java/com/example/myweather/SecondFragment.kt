@@ -12,14 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.adapter.DateViewAdapter
-import com.example.myweather.model.DateWeather
-import com.example.myweather.network.ApiService
-import com.example.myweather.network.dateData.DateWeatherData
 import com.example.myweather.viewModels.WeatherViewModel
-import com.squareup.moshi.Moshi
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
-import java.util.*
 
 private const val TAG = "SecondFragment"
 private var lat: String = ""
@@ -68,53 +61,4 @@ class SecondFragment : Fragment() {
         viewModel.deleteAllDateList(requireContext())
         return view
     }
-
-
-//    private fun getWeatherByDate() {
-//        val moshi = Moshi.Builder()
-//            .addLast(KotlinJsonAdapterFactory()).build()
-//        val retrofit = Retrofit.Builder()
-//            .baseUrl(BASE_URL)
-//            .addConverterFactory(MoshiConverterFactory.create(moshi))
-//            .build()
-//
-//        val apiService: ApiService = retrofit.create(ApiService::class.java)
-//        apiService.searchWeatherForecast(lat, lon).enqueue(
-//            object : Callback<DateWeatherData> {
-//                override fun onResponse(
-//                    call: Call<DateWeatherData>,
-//                    response: Response<DateWeatherData>
-//                ) {
-//                    Log.d(TAG, response.toString())
-//                    if (!response.isSuccessful) {
-//                        Log.d(TAG, "Unsuccessful network call")
-//                        return
-//                    }
-//                    val body = response.body()!!
-//                    val list = body.list
-//                    for (element in list) {
-//                        val main = element.main
-//                        val temp = main.temp.toString()
-//
-//                        val wind = element.wind
-//                        val windSpeed = wind.speed.toString()
-//                        val weatherArray = element.weather
-//                        val weather = weatherArray[0]
-//                        val iconId = weather.icon
-//                        val dateText = element.dt.toLong()
-//
-//                        val dateTextFormatted =
-//                            SimpleDateFormat("d MMM yyyy    HH:mm", Locale.ENGLISH).format(
-//                                Date(dateText * 1000)
-//                            )
-//                        val dateWeatherData =
-//                            DateWeather(dateTextFormatted, temp, windSpeed, iconId)
-//                        viewModel.add(dateWeatherData)
-//                    }
-//                }
-//                override fun onFailure(call: Call<DateWeatherData>, t: Throwable) {
-//                    Log.d(TAG, t.message ?: "Null message")
-//                }
-//            })
-//    }
 }

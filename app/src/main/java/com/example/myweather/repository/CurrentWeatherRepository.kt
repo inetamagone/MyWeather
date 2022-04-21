@@ -81,8 +81,6 @@ class CurrentWeatherRepository {
                         call: Call<CurrentWeatherData>,
                         response: Response<CurrentWeatherData>
                     ) {
-                        Log.d(TAG, "City name: $searchQuery")
-                        Log.d(TAG, response.toString())
                         if (!response.isSuccessful) {
                             Log.d(TAG, "Unsuccessful network call")
                             return

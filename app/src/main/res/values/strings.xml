@@ -8,7 +8,7 @@
     <string name="pressure_title">Pressure</string>
     <!-- SecondFragment -->
     <string name="weather_in_city">Weather in %1$s</string>
-    <string name="second_date">%1$s</string>
+    <string name="second_date">%1$s h</string>
     <string name="date_temp">%1$s°C</string>
     <string name="date_wind">Wind: %1$s m/s</string>
     <string name="history_btn">My weather history</string>
