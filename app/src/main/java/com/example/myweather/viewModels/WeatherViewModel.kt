@@ -64,4 +64,10 @@ class WeatherViewModel : ViewModel() {
         dateWeatherList = DateWeatherRepository.getDbByDate(context)
         return dateWeatherList
     }
+
+    fun deleteAllDateList(context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            DateWeatherRepository.deleteAll(context)
+        }
+    }
 }

@@ -65,6 +65,7 @@ class SecondFragment : Fragment() {
                     }
                 }
             }
+        viewModel.deleteAllDateList(requireContext())
         return view
     }
 

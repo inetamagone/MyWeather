@@ -43,19 +43,19 @@ class DateWeatherRepository {
                         call: Call<DateWeatherData>,
                         response: Response<DateWeatherData>
                     ) {
-                        Log.d(TAG, response.toString())
                         if (!response.isSuccessful) {
                             Log.d(TAG, "Unsuccessful network call")
                             return
                         }
-                        val apiResponse = response.body()!!
-                        val list = apiResponse.list
-                        // TODO: Correction here
-                        for (element in list) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                insertDataByDate(context, apiResponse)
-                            }
-                        }
+
+                        Log.d(TAG, "$response")
+//                        val list = apiResponse.list
+//                        // TODO: Correction here
+//                        for (i in 0 until apiResponseList.size) {
+//                            CoroutineScope(Dispatchers.IO).launch {
+//                                insertDataByDate(context, apiResponse)
+//                            }
+//                        }
                     }
                     override fun onFailure(call: Call<DateWeatherData>, t: Throwable) {
                         Log.d(TAG, t.message ?: "Null message")
@@ -76,6 +76,11 @@ class DateWeatherRepository {
 
            dateWeatherDataList = database.getDateWeatherDao().getByDate()
             return dateWeatherDataList
+        }
+
+        suspend fun deleteAll(context: Context){
+            database = initializeDateDB(context)
+            database.getDateWeatherDao().deleteAll()
         }
 
         private fun initializeDateDB(context: Context): DateWeatherDatabase {

@@ -13,6 +13,9 @@ interface DateWeatherDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDataByDate(dateWeatherData: DateWeatherData)
 
-    @Query("SELECT * FROM date_weather")
+    @Query("SELECT * FROM date_weather ORDER BY id DESC")
     fun getByDate(): LiveData<List<DateWeatherData>>
+
+    @Query("DELETE FROM date_weather")
+    suspend fun deleteAll()
 }

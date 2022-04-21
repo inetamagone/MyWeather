@@ -1,7 +1,7 @@
 package com.example.myweather.database.dateDatabase
 
 import androidx.room.TypeConverter
-import com.example.myweather.network.currentData.Weather
+import com.example.myweather.network.dateData.Weather
 import com.example.myweather.network.dateData.DataList
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -21,7 +21,7 @@ class DateConverters {
         return gson.fromJson<List<DataList?>>(data, listType)
     }
     @TypeConverter
-    fun listDataListToString(objects: List<DataList?>?): String? {
+    fun dataListToString(objects: List<DataList?>?): String? {
         val gson = Gson()
         return gson.toJson(objects)
     }
