@@ -3,6 +3,7 @@ package com.example.myweather.network.currentData
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.*
 
 @Entity(
     tableName = "current_weather"
@@ -10,6 +11,7 @@ import androidx.room.PrimaryKey
 data class CurrentWeatherData(
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null,
+    var current_date: Date?,
     @Embedded
     val coord: Coord,
     val dt: Int,

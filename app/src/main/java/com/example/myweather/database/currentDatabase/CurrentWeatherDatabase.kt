@@ -22,6 +22,7 @@ abstract class CurrentWeatherDatabase : RoomDatabase() {
         @Volatile
         // Recreate the instance of database
         var INSTANCE: CurrentWeatherDatabase? = null
+        val converterInstance = Converters()
 
         fun createDatabase(context: Context): CurrentWeatherDatabase {
             val tempInstance = INSTANCE
@@ -32,8 +33,11 @@ abstract class CurrentWeatherDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     CurrentWeatherDatabase::class.java,
-                    "current_weather_db"
-                ).build()
+                    //"current_we" // String
+                    //"current_data"// Date
+                    "current_datab"// Date?
+                ).addTypeConverter(converterInstance)
+                    .build()
                 INSTANCE = instance
                 return instance
             }
