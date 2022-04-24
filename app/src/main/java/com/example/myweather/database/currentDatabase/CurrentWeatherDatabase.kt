@@ -22,7 +22,7 @@ abstract class CurrentWeatherDatabase : RoomDatabase() {
         @Volatile
         // Recreate the instance of database
         var INSTANCE: CurrentWeatherDatabase? = null
-        val converterInstance = Converters()
+        val converterInstance by lazy { Converters() }
 
         fun createDatabase(context: Context): CurrentWeatherDatabase {
             val tempInstance = INSTANCE

@@ -1,8 +1,7 @@
 package com.example.myweather.network.currentData
 
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
+import com.example.myweather.database.currentDatabase.Converters
 import java.util.*
 
 @Entity(
@@ -11,6 +10,7 @@ import java.util.*
 data class CurrentWeatherData(
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null,
+    @TypeConverters(Converters::class)
     var current_date: Date?,
     @Embedded
     val coord: Coord,
