@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/delete.xml" value="0.1825" />
+        <entry key="app/src/main/res/drawable/filter.xml" value="0.1825" />
         <entry key="app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.2505" />
         <entry key="app/src/main/res/layout-land/activity_main.xml" value="0.2707231040564374" />
         <entry key="app/src/main/res/layout-land/fragment_first.xml" value="0.1" />
@@ -16,6 +18,7 @@
         <entry key="app/src/main/res/layout/list_item.xml" value="0.1" />
         <entry key="app/src/main/res/menu-v26/delete_menu.xml" value="0.32083333333333336" />
         <entry key="app/src/main/res/menu/delete_menu.xml" value="0.1" />
+        <entry key="app/src/main/res/menu/options_menu.xml" value="0.14273504273504273" />
       </map>
     </option>
   </component>

@@ -1,6 +1,7 @@
 package com.example.myweather.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.myweather.database.currentDatabase.CurrentWeatherDatabase
 import com.example.myweather.network.currentData.CurrentWeatherData
 
@@ -16,4 +17,9 @@ class HistoryWeatherRepository(val database: CurrentWeatherDatabase) {
 
     suspend fun deleteEntry(currentWeatherData: CurrentWeatherData) =
         database.getWeatherDao().deleteEntry(currentWeatherData)
+
+    fun filterWeather(sortBy: Int) : LiveData<List<CurrentWeatherData>>{
+        return database.getWeatherDao().filterWeather(sortBy)
+    }
 }
+

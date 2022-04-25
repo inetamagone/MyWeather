@@ -2,6 +2,7 @@ package com.example.myweather
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -187,7 +188,11 @@ class FirstFragment : Fragment() {
 
     private fun getCity(): String {
         requireActivity().findViewById<TextInputEditText>(R.id.edit_city).apply {
-            return if (text.isNullOrBlank()) DEFAULT_CITY else text.toString()
+            return if (text.isNullOrBlank()) DEFAULT_CITY else text.formatting()
         }
     }
+}
+
+private fun Editable?.formatting(): String {
+    return this.toString().trim().capitalize()
 }

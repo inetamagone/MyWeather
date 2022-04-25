@@ -11,11 +11,8 @@ import kotlinx.coroutines.launch
 private const val TAG = "HistoryViewModel"
 class HistoryViewModel(private val repository: HistoryWeatherRepository): ViewModel() {
 
-    lateinit var weatherList: LiveData<List<CurrentWeatherData>>
-
     fun getAllHistory(): LiveData<List<CurrentWeatherData>> {
-        weatherList = repository.getHistory()
-        return weatherList
+        return repository.getHistory()
     }
 
     fun deleteAllHistory() {
@@ -28,5 +25,9 @@ class HistoryViewModel(private val repository: HistoryWeatherRepository): ViewMo
         viewModelScope.launch(Dispatchers.IO) {
             repository.deleteEntry(currentWeatherData)
         }
+    }
+
+    fun filterItems(sortBy: Int): LiveData<List<CurrentWeatherData>> {
+        return repository.filterWeather(sortBy)
     }
 }

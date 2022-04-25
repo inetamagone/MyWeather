@@ -19,5 +19,10 @@
     <string name="history_temp">25 C</string>
     <string name="history_wind">Wind: 4 m/s</string>
     <string name="delete_btn">Delete</string>
+    <string name="filter">Filter</string>
+    <string name="city_asc">City ASC</string>
+    <string name="city_desc">City DESC</string>
+    <string name="temperature_asc">Temperature ASC</string>
+    <string name="temperature_desc">Temperature DESC</string>
 
 </resources>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_filter"
+        android:title="@string/filter"
+        android:icon="@drawable/filter"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item android:id="@+id/filter_name1"
+                android:title="@string/city_asc"
+                android:icon="@drawable/sort_by_alpha"
+                app:showAsAction="never"/>
+            <item android:id="@+id/filter_name2"
+                android:title="@string/city_desc"
+                android:icon="@drawable/sort_by_alpha"
+                app:showAsAction="never"/>
+            <item android:id="@+id/filter_temp1"
+                android:title="@string/temperature_asc"
+                android:icon="@drawable/filter"
+                app:showAsAction="never"/>
+            <item android:id="@+id/filter_temp2"
+                android:title="@string/temperature_desc"
+                android:icon="@drawable/filter"
+                app:showAsAction="never"/>
+        </menu>
+    </item>
+    <item android:id="@+id/menu_delete"
+        android:title="@string/delete_btn"
+        android:icon="@drawable/delete"
+        app:showAsAction="ifRoom"/>
+
+</menu>
