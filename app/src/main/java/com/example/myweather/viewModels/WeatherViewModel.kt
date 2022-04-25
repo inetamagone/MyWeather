@@ -56,6 +56,12 @@ class WeatherViewModel : ViewModel() {
         }
     }
 
+    fun deleteEntry(currentWeatherData: CurrentWeatherData) {
+        viewModelScope.launch(Dispatchers.IO) {
+            CurrentWeatherRepository.deleteEntry(currentWeatherData)
+        }
+    }
+
     // Second Fragment
     fun getDateWeatherApi(context: Context, lat: String, lon: String) {
         viewModelScope.launch {

@@ -10,8 +10,6 @@ import java.util.*
 data class CurrentWeatherData(
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null,
-    @TypeConverters(Converters::class)
-    var current_date: Date?,
     @Embedded
     val coord: Coord,
     val dt: Int,

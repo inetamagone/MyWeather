@@ -22,4 +22,7 @@ interface CurrentWeatherDao {
 
     @Query("DELETE FROM current_weather")
     suspend fun deleteAllHistory()
+
+    @Delete
+    suspend fun deleteEntry(currentWeatherData: CurrentWeatherData)
 }

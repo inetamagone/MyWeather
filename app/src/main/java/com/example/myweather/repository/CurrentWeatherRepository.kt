@@ -143,5 +143,7 @@ class CurrentWeatherRepository {
             database = initializeDB(context)
             database.getWeatherDao().deleteAllHistory()
         }
+
+        suspend fun deleteEntry(currentWeatherData: CurrentWeatherData) = database!!.getWeatherDao().deleteEntry(currentWeatherData)
     }
 }

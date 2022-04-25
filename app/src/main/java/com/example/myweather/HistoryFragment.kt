@@ -8,6 +8,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.adapter.HistoryViewAdapter
@@ -42,10 +43,49 @@ class HistoryFragment : Fragment() {
                     }
                 }
             }
+        swipeDelete(recyclerView, adapter)
         // Add menu
         setHasOptionsMenu(true)
 
         return view
+    }
+
+    // Swipe delete method
+    private fun swipeDelete(recyclerView: RecyclerView, adapter: HistoryViewAdapter) {
+        viewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val item = adapter.differ.currentList[position]
+                val count = adapter.differ.currentList.size
+                viewModel.deleteEntry(item)
+//                adapter.notifyItemRemoved(position)
+//                adapter.notifyItemChanged(position)
+                adapter.notifyItemRangeChanged(position, count)
+
+                Toast.makeText(
+                    requireContext(),
+                    "Weather entry deleted!",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            }
+        }
+
+        ItemTouchHelper(itemTouchHelperCallback).apply {
+            attachToRecyclerView(recyclerView)
+        }
     }
 
     // Delete all method
