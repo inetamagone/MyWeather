@@ -1,7 +1,6 @@
 package com.example.myweather.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.myweather.database.currentDatabase.CurrentWeatherDatabase
 import com.example.myweather.network.currentData.CurrentWeatherData
 

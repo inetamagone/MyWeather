@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.AsyncListDiffer
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myweather.R
@@ -13,21 +11,9 @@ import com.example.myweather.network.dateData.DataList
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DateViewAdapter(
+class DateViewAdapter(private val weatherList: List<DataList>
 ) :
     RecyclerView.Adapter<DateViewAdapter.DateViewHolder>() {
-
-    private val weatherComparatorDifferCallback = object : DiffUtil.ItemCallback<DataList>() {
-        override fun areItemsTheSame(oldItem: DataList, newItem: DataList): Boolean {
-            return oldItem === newItem
-        }
-
-        override fun areContentsTheSame(oldItem: DataList, newItem: DataList): Boolean {
-            return oldItem.id == newItem.id
-        }
-    }
-
-    val differ = AsyncListDiffer(this, weatherComparatorDifferCallback)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -39,7 +25,7 @@ class DateViewAdapter(
     }
 
     override fun onBindViewHolder(holder: DateViewAdapter.DateViewHolder, position: Int) {
-        holder.bind(differ.currentList[position])
+        holder.bind(weatherList[position])
     }
 
     inner class DateViewHolder(private val binding: View) : RecyclerView.ViewHolder(binding) {
@@ -67,6 +53,6 @@ class DateViewAdapter(
     }
 
     override fun getItemCount(): Int {
-        return differ.currentList.size
+        return weatherList.size
     }
 }

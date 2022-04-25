@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.AsyncListDiffer
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myweather.R
@@ -14,26 +12,7 @@ import com.example.myweather.network.currentData.CurrentWeatherData
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HistoryViewAdapter : RecyclerView.Adapter<HistoryViewAdapter.HistoryViewHolder>() {
-
-    private val weatherComparatorDifferCallback =
-        object : DiffUtil.ItemCallback<CurrentWeatherData>() {
-            override fun areItemsTheSame(
-                oldItem: CurrentWeatherData,
-                newItem: CurrentWeatherData
-            ): Boolean {
-                return oldItem === newItem
-            }
-
-            override fun areContentsTheSame(
-                oldItem: CurrentWeatherData,
-                newItem: CurrentWeatherData
-            ): Boolean {
-                return oldItem.dt == newItem.dt
-            }
-        }
-
-    val differ = AsyncListDiffer(this, weatherComparatorDifferCallback)
+class HistoryViewAdapter(private val weatherList: List<CurrentWeatherData>) : RecyclerView.Adapter<HistoryViewAdapter.HistoryViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -45,7 +24,7 @@ class HistoryViewAdapter : RecyclerView.Adapter<HistoryViewAdapter.HistoryViewHo
     }
 
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
-        holder.bind(differ.currentList[position])
+        holder.bind(weatherList[position])
     }
 
     class HistoryViewHolder(private val binding: View) : RecyclerView.ViewHolder(binding) {
@@ -74,7 +53,12 @@ class HistoryViewAdapter : RecyclerView.Adapter<HistoryViewAdapter.HistoryViewHo
         }
     }
 
+    fun getItemByID(id: Int): CurrentWeatherData {
+        return weatherList[id]
+    }
+
     override fun getItemCount(): Int {
-        return differ.currentList.size
+        return weatherList.size
+        //return differ.currentList.size
     }
 }

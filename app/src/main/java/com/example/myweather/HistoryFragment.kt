@@ -22,40 +22,34 @@ private const val TAG = "HistoryFragment"
 class HistoryFragment : Fragment() {
 
     private lateinit var viewModel: HistoryViewModel
+    private lateinit var adapter: HistoryViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_history, container, false)
-
         // Add menu
         setHasOptionsMenu(true)
-        Log.d(TAG, "onCreateView")
-        return view
+        return inflater.inflate(R.layout.fragment_history, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "onViewCreated")
         val repository = HistoryWeatherRepository(CurrentWeatherDatabase(requireContext()))
         val factory = HistoryModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[HistoryViewModel::class.java]
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.history_recycler_view)
-        val adapter = HistoryViewAdapter()
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         viewModel.getAllHistory()
             .observe(viewLifecycleOwner) {
-                observeData(it, adapter)
+                observeData(it, recyclerView)
             }
-        swipeDelete(recyclerView, adapter)
+        swipeDelete(recyclerView)
     }
 
     // Swipe delete method
-    private fun swipeDelete(recyclerView: RecyclerView, adapter: HistoryViewAdapter) {
+    private fun swipeDelete(recyclerView: RecyclerView) {
         viewModel = ViewModelProvider(this)[HistoryViewModel::class.java]
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             0,
@@ -71,19 +65,8 @@ class HistoryFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-                val item = adapter.differ.currentList[position]
-                val count = adapter.differ.currentList.size
-                viewModel.deleteEntry(item)
-//                adapter.notifyItemRemoved(position)
-//                adapter.notifyItemChanged(position)
-                adapter.notifyItemRangeChanged(position, count)
-
-                Toast.makeText(
-                    requireContext(),
-                    "Weather entry deleted!",
-                    Toast.LENGTH_SHORT
-                )
+                viewModel.deleteEntry(adapter.getItemByID(viewHolder.adapterPosition))
+                Toast.makeText(requireContext(), "Weather entry deleted!", Toast.LENGTH_SHORT)
                     .show()
             }
         }
@@ -100,38 +83,33 @@ class HistoryFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val recyclerView = requireActivity().findViewById<RecyclerView>(R.id.history_recycler_view)
-        val adapter = HistoryViewAdapter()
-        recyclerView.adapter = adapter
         when (item.itemId) {
             R.id.menu_delete -> deleteAllHistory()
             R.id.filter_name1 -> viewModel.filterItems(1)
                 .observe(viewLifecycleOwner) {
-                    observeData(it, adapter)
+                    observeData(it, recyclerView)
                 }
             R.id.filter_name2 -> viewModel.filterItems(2)
                 .observe(viewLifecycleOwner) {
-                    observeData(it, adapter)
+                    observeData(it, recyclerView)
                 }
             R.id.filter_temp1 -> viewModel.filterItems(3)
                 .observe(viewLifecycleOwner) {
-                    observeData(it, adapter)
+                    observeData(it, recyclerView)
                 }
             R.id.filter_temp2 -> viewModel.filterItems(4)
                 .observe(viewLifecycleOwner) {
-                    observeData(it, adapter)
+                    observeData(it, recyclerView)
                 }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun observeData(it: List<CurrentWeatherData>, adapter: HistoryViewAdapter) {
-        if (it == null) {
-            Log.d(TAG, "Data was not found!")
-        } else {
-            it.let {
-                adapter.differ.submitList(it)
-                Log.d(TAG, "Data submitted to adapter!")
-            }
+    private fun observeData(it: List<CurrentWeatherData>, recyclerView: RecyclerView) {
+        it.let {
+            adapter = HistoryViewAdapter(it)
+            recyclerView.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
