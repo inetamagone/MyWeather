@@ -1,7 +1,6 @@
 package com.example.myweather
 
 import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -12,13 +11,16 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.adapter.HistoryViewAdapter
-import com.example.myweather.viewModels.WeatherViewModel
+import com.example.myweather.database.currentDatabase.CurrentWeatherDatabase
+import com.example.myweather.repository.HistoryWeatherRepository
+import com.example.myweather.viewModels.factories.HistoryModelFactory
+import com.example.myweather.viewModels.HistoryViewModel
 
 private const val TAG = "HistoryFragment"
 
 class HistoryFragment : Fragment() {
 
-    private lateinit var viewModel: WeatherViewModel
+    private lateinit var viewModel: HistoryViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,13 +28,16 @@ class HistoryFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_history, container, false)
 
-        viewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
+        val repository = HistoryWeatherRepository(CurrentWeatherDatabase(requireContext()))
+        val factory = HistoryModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory)[HistoryViewModel::class.java]
+
         val recyclerView = view.findViewById<RecyclerView>(R.id.history_recycler_view)
         val adapter = HistoryViewAdapter()
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        viewModel.getAllHistory(requireContext())
+        viewModel.getAllHistory()
             .observe(viewLifecycleOwner) { history ->
                 if (history == null) {
                     Log.d(TAG, "History data was not found!")
@@ -52,7 +57,7 @@ class HistoryFragment : Fragment() {
 
     // Swipe delete method
     private fun swipeDelete(recyclerView: RecyclerView, adapter: HistoryViewAdapter) {
-        viewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
+        viewModel = ViewModelProvider(this)[HistoryViewModel::class.java]
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
 
@@ -95,15 +100,15 @@ class HistoryFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_delete) {
-            deleteAllHistory(requireContext())
+            deleteAllHistory()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun deleteAllHistory(context: Context) {
+    private fun deleteAllHistory() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setPositiveButton("OK") { _, _ ->
-            viewModel.deleteAllHistory(context)
+            viewModel.deleteAllHistory()
             Toast.makeText(
                 requireContext(),
                 "All Weather History is removed",

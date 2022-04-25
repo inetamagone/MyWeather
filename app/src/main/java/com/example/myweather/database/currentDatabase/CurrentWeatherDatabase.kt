@@ -21,22 +21,18 @@ abstract class CurrentWeatherDatabase : RoomDatabase() {
         // Changes can be seen immediately
         @Volatile
         // Recreate the instance of database
-        var INSTANCE: CurrentWeatherDatabase? = null
+        private var instance: CurrentWeatherDatabase? = null
+        private val LOCK = Any()
 
-        fun createDatabase(context: Context): CurrentWeatherDatabase {
-            val tempInstance = INSTANCE
-            if (tempInstance != null) {
-                return tempInstance
-            }
-            synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    CurrentWeatherDatabase::class.java,
-                    "current_weather"
-                ).build()
-                INSTANCE = instance
-                return instance
-            }
+        operator fun invoke(context: Context) = instance ?: synchronized(LOCK) {
+            instance ?: createDatabase(context).also { instance = it }
         }
+
+        private fun createDatabase(context: Context) =
+            Room.databaseBuilder(
+                context.applicationContext,
+                CurrentWeatherDatabase::class.java,
+                "current_weather"
+            ).build()
     }
 }

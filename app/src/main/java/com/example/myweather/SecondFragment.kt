@@ -12,14 +12,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.adapter.DateViewAdapter
-import com.example.myweather.viewModels.WeatherViewModel
+import com.example.myweather.viewModels.DateViewModel
 
 private const val TAG = "SecondFragment"
 private var lat: String = ""
 private var lon: String = ""
 
 class SecondFragment : Fragment() {
-    private lateinit var viewModel: WeatherViewModel
+    private lateinit var viewModel: DateViewModel
     private lateinit var recyclerView: RecyclerView
 
     @SuppressLint("NotifyDataSetChanged")
@@ -40,7 +40,7 @@ class SecondFragment : Fragment() {
         lat = latString.toString()
         lon = lonString.toString()
 
-        viewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
+        viewModel = ViewModelProvider(this)[DateViewModel::class.java]
         recyclerView = view.findViewById(R.id.recycler_view)
         val adapter = DateViewAdapter()
         recyclerView.adapter = adapter

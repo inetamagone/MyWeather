@@ -1,7 +1,6 @@
 package com.example.myweather.repository
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.myweather.database.currentDatabase.CurrentWeatherDatabase
@@ -21,15 +20,9 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 private const val TAG = "CurrentWeatherRepository"
 
-class CurrentWeatherRepository {
-    companion object {
+class CurrentWeatherRepository(val database: CurrentWeatherDatabase) {
 
-        lateinit var database: CurrentWeatherDatabase
-        lateinit var weatherDataFromDb: LiveData<CurrentWeatherData>
-        private lateinit var weatherDataList: LiveData<List<CurrentWeatherData>>
-
-        // First Fragment
-        fun getCurrentWeatherApi(context: Context) {
+        fun getCurrentWeatherApi() {
             val moshi = Moshi.Builder()
                 .addLast(KotlinJsonAdapterFactory()).build()
             val retrofit = Retrofit.Builder()
@@ -53,7 +46,8 @@ class CurrentWeatherRepository {
                         }
                         val apiResponseData = response.body()!!
                         CoroutineScope(Dispatchers.IO).launch {
-                            insertData(context, apiResponseData)
+                            Log.d(TAG, "Unsuccessful network call")
+                            insertData(apiResponseData)
                         }
                     }
 
@@ -64,7 +58,7 @@ class CurrentWeatherRepository {
                 })
         }
 
-        fun searchCurrentWeatherApi(context: Context, searchQuery: String) {
+        fun searchCurrentWeatherApi(searchQuery: String) {
             val moshi = Moshi.Builder()
                 .addLast(KotlinJsonAdapterFactory()).build()
             val retrofit = Retrofit.Builder()
@@ -88,7 +82,7 @@ class CurrentWeatherRepository {
                         val apiResponseData = response.body()!!
 
                         CoroutineScope(Dispatchers.IO).launch {
-                            insertData(context, apiResponseData)
+                            insertData(apiResponseData)
                         }
                     }
 
@@ -100,8 +94,7 @@ class CurrentWeatherRepository {
         }
 
         @SuppressLint("LongLogTag")
-        suspend fun insertData(context: Context, currentWeatherData: CurrentWeatherData) {
-            database = initializeDB(context)
+        suspend fun insertData(currentWeatherData: CurrentWeatherData) {
             CoroutineScope(Dispatchers.IO).launch {
                 database.getWeatherDao().insertData(currentWeatherData)
                 Log.d(TAG, "Data inserted into db: $currentWeatherData")
@@ -109,41 +102,14 @@ class CurrentWeatherRepository {
         }
 
         @SuppressLint("LongLogTag")
-        fun getWeatherDataFromDb(context: Context): LiveData<CurrentWeatherData> {
-            database = initializeDB(context)
-            weatherDataFromDb = database.getWeatherDao().getWeatherDataFromDb()
-            Log.d(TAG, "Data got back from db: $weatherDataFromDb")
-            return weatherDataFromDb
+        fun getWeatherDataFromDb(): LiveData<CurrentWeatherData> {
+            return database.getWeatherDao().getWeatherDataFromDb()
         }
 
         @SuppressLint("LongLogTag")
         fun getWeatherSearchFromDb(
-            context: Context,
             searchQuery: String
         ): LiveData<CurrentWeatherData> {
-            database = initializeDB(context)
-            weatherDataFromDb = database.getWeatherDao().getWeatherSearchFromDb(searchQuery)
-            Log.d(TAG, "Data got back from db: $weatherDataFromDb")
-            return weatherDataFromDb
+            return database.getWeatherDao().getWeatherSearchFromDb(searchQuery)
         }
-
-        private fun initializeDB(context: Context): CurrentWeatherDatabase {
-            return CurrentWeatherDatabase.createDatabase(context)
-        }
-
-        // History Fragment
-        fun getHistory(context: Context): LiveData<List<CurrentWeatherData>> {
-            database = initializeDB(context)
-
-            weatherDataList = database.getWeatherDao().getHistory()
-            return weatherDataList
-        }
-
-        suspend fun deleteAllHistory(context: Context) {
-            database = initializeDB(context)
-            database.getWeatherDao().deleteAllHistory()
-        }
-
-        suspend fun deleteEntry(currentWeatherData: CurrentWeatherData) = database!!.getWeatherDao().deleteEntry(currentWeatherData)
-    }
 }

@@ -14,8 +14,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
+import com.example.myweather.database.currentDatabase.CurrentWeatherDatabase
 import com.example.myweather.databinding.FragmentFirstBinding
+import com.example.myweather.repository.CurrentWeatherRepository
 import com.example.myweather.utils.DEFAULT_CITY
+import com.example.myweather.viewModels.factories.CurrentModelFactory
 import com.example.myweather.viewModels.WeatherViewModel
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
@@ -37,21 +40,25 @@ class FirstFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_first, container, false)
-        viewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
         binding.lifecycleOwner = this
 
+        val repository = CurrentWeatherRepository(CurrentWeatherDatabase(requireContext()))
+        val factory = CurrentModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory)[WeatherViewModel::class.java]
+
+        viewModel.getCurrentWeatherApi()
+        val dbData = viewModel.getDataFromDb()
+        Log.d(TAG, "onLaunch DBdata on launch: $dbData")
         Log.d(TAG, "OnCreateView called")
         return binding.root
     }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d(TAG, "onViewCreated called")
         super.onViewCreated(view, savedInstanceState)
 
-        // Here making API call, getting data from database, observing currentList and populating into the views
-        viewModel.getCurrentWeatherApi(requireContext())
-        val dbData = viewModel.getDataFromDb(requireContext())
-        Log.d(TAG, "onLaunch DBdata on launch: $dbData")
+
         viewModel.currentList.observe(viewLifecycleOwner) {
             if (it == null) {
                 Log.d(TAG, "Data was not found onLaunch")
@@ -94,22 +101,21 @@ class FirstFragment : Fragment() {
                 // Image icon
                 Glide.with(requireContext())
                     .load(imageUrl)
-                    .into(view.findViewById(R.id.image_main)!!)
+                    .into(requireActivity().findViewById(R.id.image_main)!!)
                 Log.d(TAG, "So I found data...")
             }
-
         }
 
         // Search function
-        val searchIcon = binding.root.findViewById<ImageView>(R.id.search_icon)
+        val searchIcon = view.findViewById<ImageView>(R.id.search_icon)
         searchIcon.setOnClickListener {
             Log.d(TAG, "Search Button clicked")
             city = getCity()
-            val searchApi = viewModel.searchCurrentWeatherApi(requireContext(), city)
-            Log.d(TAG, "SearchApi called: $searchApi")
-            val dbData = viewModel.getSearchFromDb(requireContext(), city)
-            Log.d(TAG, "Search DbData called: $dbData")
-            viewModel.currentList.observe(viewLifecycleOwner) {
+            viewModel.searchCurrentWeatherApi(city)
+            Log.d(TAG, "SearchApi called: $city")
+            viewModel.getSearchFromDb(requireContext(), city)
+            Log.d(TAG, "Search DbData called: $city")
+            viewModel.searchList.observe(viewLifecycleOwner) {
                 if (it == null) {
                     Log.d(TAG, "Data was not found in search")
                 } else {
@@ -151,13 +157,11 @@ class FirstFragment : Fragment() {
                     // Image icon
                     Glide.with(requireContext())
                         .load(imageUrl)
-                        .into(view.findViewById(R.id.image_main)!!)
-                    Log.d(TAG, "So I populated searched data...")
+                        .into(requireActivity().findViewById(R.id.image_main)!!)
+                    Log.d(TAG, "So I populated searched data")
                 }
-
             }
         }
-
         // Navigation to the Second Fragment
         val navController = Navigation.findNavController(view)
 
@@ -172,7 +176,7 @@ class FirstFragment : Fragment() {
             })
         }
 
-        // Search function
+        // History view
         val historyButton = view.findViewById<Button>(R.id.button_history)
         historyButton.setOnClickListener {
             Log.d(TAG, "History Button clicked")

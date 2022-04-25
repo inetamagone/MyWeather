@@ -28,7 +28,6 @@ class DateWeatherRepository {
         lateinit var database: DateWeatherDatabase
         lateinit var dateWeatherDataList: LiveData<List<DataList>>
 
-        // Second Fragment
         fun getDateWeatherApi(context: Context, lat: String, lon: String) {
             val moshi = Moshi.Builder()
                 .addLast(KotlinJsonAdapterFactory()).build()
