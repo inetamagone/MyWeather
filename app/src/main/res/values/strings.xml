@@ -4,20 +4,35 @@
     <string name="wind_title">Wind</string>
     <string name="humidity_title">Humidity</string>
     <string name="pressure_title">Pressure</string>
+    <string name="search_hint">Enter City name</string>
+    <string name="text_updated">Updated at:  %1$s h</string>
+    <string name="text_conditions">%1$s</string>
+    <string name="text_temp">%1$s °C</string>
+    <string name="text_min_temp">Min Temp: %1$s °C</string>
+    <string name="text_max_temp">Max Temp: %1$s °C</string>
+    <string name="text_humidity">%1$s</string>
+    <string name="text_pressure">%1$s hPa</string>
+    <string name="text_city">%1$s, %2$s</string>
+    <string name="text_wind">%1$s m/s</string>
+
     <string name="weather_in_city">Weather in %1$s</string>
     <string name="second_date">%1$s h</string>
     <string name="date_temp">%1$s°C</string>
     <string name="date_wind">Wind: %1$s m/s</string>
+
     <string name="history_btn">My weather history</string>
-    <string name="history_date">April 20, 2022</string>
-    <string name="history_temp">25 C</string>
-    <string name="history_wind">Wind: 4 m/s</string>
+    <string name="history_city">%1$s</string>
+    <string name="history_date">%1$s h</string>
+    <string name="history_temp">%1$s °C</string>
+    <string name="history_wind">Wind: %1$s m/s</string>
+
     <string name="delete_btn">Delete</string>
     <string name="filter">Filter</string>
     <string name="city_asc">City ASC</string>
     <string name="city_desc">City DESC</string>
     <string name="temperature_asc">Temperature ASC</string>
     <string name="temperature_desc">Temperature DESC</string>
+
     <string name="unsuccessful_network_call">Unsuccessful network call</string>
     <string name="null_message">Null message</string>
     <string name="data_not_found_view_created">Data was not found onViewCreated</string>
@@ -28,16 +43,4 @@
     <string name="no">No</string>
     <string name="delete_all">Delete All</string>
     <string name="question_delete_all">Do you want to delete all history?</string>
-    <string name="text_updated">Updated at:  %1$s h</string>
-    <string name="text_conditions">%1$s</string>
-    <string name="text_temp">%1$s °C</string>
-    <string name="text_min_temp">Min Temp: %1$s °C</string>
-    <string name="text_max_temp">Max Temp: %1$s °C</string>
-    <string name="text_humidity">%1$s</string>
-    <string name="text_pressure">%1$s hPa</string>
-    <string name="text_city">%1$s, %2$s</string>
-    <string name="text_wind">%1$s m/s</string>
-    <string name="search_hint">Enter City name</string>
-    <string name="history_city">%1$s</string>
-
 </resources>

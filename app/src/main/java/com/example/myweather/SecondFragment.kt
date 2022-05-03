@@ -55,7 +55,7 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
         viewModel.getAllByDate(requireContext())
             .observe(viewLifecycleOwner) {
                     it.let {
-                        adapter = DateViewAdapter(it)
+                        adapter = DateViewAdapter(requireContext(), it)
                         recyclerView.adapter = adapter
                         recyclerView.layoutManager = LinearLayoutManager(requireContext())
                     }

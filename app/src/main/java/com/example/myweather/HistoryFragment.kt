@@ -107,7 +107,7 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
 
     private fun observeData(it: List<CurrentWeatherData>, recyclerView: RecyclerView) =
         it.let {
-            adapter = HistoryViewAdapter(it)
+            adapter = HistoryViewAdapter(requireContext(), it)
             recyclerView.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
         }
