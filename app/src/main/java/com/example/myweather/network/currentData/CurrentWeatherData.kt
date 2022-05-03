@@ -1,8 +1,6 @@
 package com.example.myweather.network.currentData
 
 import androidx.room.*
-import com.example.myweather.database.currentDatabase.Converters
-import java.util.*
 
 @Entity(
     tableName = "current_weather"
@@ -10,6 +8,7 @@ import java.util.*
 data class CurrentWeatherData(
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null,
+    var timestamp: Long = System.currentTimeMillis()/1000,
     @Embedded
     val coord: Coord,
     val dt: Int,
@@ -22,4 +21,5 @@ data class CurrentWeatherData(
     val weather: List<Weather>,
     @Embedded
     val wind: Wind
+
 )

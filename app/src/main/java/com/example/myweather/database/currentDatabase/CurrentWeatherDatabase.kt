@@ -32,7 +32,7 @@ abstract class CurrentWeatherDatabase : RoomDatabase() {
             Room.databaseBuilder(
                 context.applicationContext,
                 CurrentWeatherDatabase::class.java,
-                "current_weather"
+                "currentD"
             ).build()
     }
 }

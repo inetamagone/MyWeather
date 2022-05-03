@@ -80,7 +80,6 @@ class CurrentWeatherRepository(val database: CurrentWeatherDatabase) {
                             return
                         }
                         val apiResponseData = response.body()!!
-
                         CoroutineScope(Dispatchers.IO).launch {
                             insertData(apiResponseData)
                         }
