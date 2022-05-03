@@ -50,7 +50,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         viewModel = ViewModelProvider(this, factory)[WeatherViewModel::class.java]
 
         viewModel.getCurrentWeatherApi(requireContext())
-        
+
         viewModel.getDataFromDb().observe(viewLifecycleOwner) {
             if (it == null) {
                 Log.d(TAG, getString(R.string.data_not_found_view_created))

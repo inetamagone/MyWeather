@@ -11,12 +11,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.adapter.HistoryViewAdapter
 import com.example.myweather.database.currentDatabase.CurrentWeatherDatabase
+import com.example.myweather.databinding.FragmentHistoryBinding
 import com.example.myweather.network.currentData.CurrentWeatherData
 import com.example.myweather.repository.HistoryWeatherRepository
 import com.example.myweather.viewModels.factories.HistoryModelFactory
 import com.example.myweather.viewModels.HistoryViewModel
 
-class HistoryFragment : Fragment() {
+class HistoryFragment : Fragment(R.layout.fragment_history) {
+
+    private var _binding: FragmentHistoryBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var viewModel: HistoryViewModel
     private lateinit var adapter: HistoryViewAdapter
@@ -24,19 +28,22 @@ class HistoryFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Add menu
         setHasOptionsMenu(true)
-        return inflater.inflate(R.layout.fragment_history, container, false)
+
+        _binding = FragmentHistoryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val repository = HistoryWeatherRepository(CurrentWeatherDatabase(requireContext()))
         val factory = HistoryModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[HistoryViewModel::class.java]
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.history_recycler_view)
+        val recyclerView = binding.historyRecyclerView
 
         viewModel.getAllHistory()
             .observe(viewLifecycleOwner) {
@@ -51,7 +58,6 @@ class HistoryFragment : Fragment() {
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-
         ) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -60,14 +66,12 @@ class HistoryFragment : Fragment() {
             ): Boolean {
                 return true
             }
-
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 viewModel.deleteEntry(adapter.getItemByID(viewHolder.adapterPosition))
                 Toast.makeText(requireContext(), getString(R.string.entry_deleted), Toast.LENGTH_SHORT)
                     .show()
             }
         }
-
         ItemTouchHelper(itemTouchHelperCallback).apply {
             attachToRecyclerView(recyclerView)
         }
@@ -78,7 +82,7 @@ class HistoryFragment : Fragment() {
         inflater.inflate(R.menu.options_menu, menu)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val recyclerView = requireActivity().findViewById<RecyclerView>(R.id.history_recycler_view)
+        val recyclerView = binding.historyRecyclerView
         when (item.itemId) {
             R.id.menu_delete -> deleteAllHistory()
             R.id.filter_name1 -> viewModel.filterItems(1)
