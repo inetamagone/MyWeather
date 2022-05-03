@@ -28,15 +28,16 @@
     <string name="no">No</string>
     <string name="delete_all">Delete All</string>
     <string name="question_delete_all">Do you want to delete all history?</string>
-    <string name="example_updated">Updated at April 19, 17h08</string>
-    <string name="example_conditions">Sunny</string>
-    <string name="example_temp">25 C</string>
-    <string name="example_min_temp">22 C</string>
-    <string name="example_max_temp">27 C</string>
-    <string name="example_humidity">20 %</string>
-    <string name="example_pressure">4 hPa</string>
-    <string name="example_city">Riga</string>
-    <string name="example_wind">4 m/s</string>
+    <string name="text_updated">Updated at:  %1$s h</string>
+    <string name="text_conditions">%1$s</string>
+    <string name="text_temp">%1$s °C</string>
+    <string name="text_min_temp">Min Temp: %1$s °C</string>
+    <string name="text_max_temp">Max Temp: %1$s °C</string>
+    <string name="text_humidity">%1$s</string>
+    <string name="text_pressure">%1$s hPa</string>
+    <string name="text_city">%1$s, %2$s</string>
+    <string name="text_wind">%1$s m/s</string>
     <string name="search_hint">Enter City name</string>
+    <string name="history_city">%1$s</string>
 
 </resources>

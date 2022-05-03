@@ -49,7 +49,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:saveEnabled="false"
-                    android:text="@string/example_city"
+                    android:text="@string/text_city"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_32"
                     android:layout_marginBottom="@dimen/space_5" />
@@ -57,7 +57,7 @@
                     android:id="@+id/updated_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/example_updated"
+                    android:text="@string/text_updated"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_14" />
                 <ImageView
@@ -78,14 +78,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/example_conditions"
+                    android:text="@string/text_conditions"
                     android:textSize="@dimen/text_18" />
                 <TextView
                     android:id="@+id/temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/example_temp"
+                    android:text="@string/text_temp"
                     android:textSize="@dimen/text_45" />
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -96,7 +96,7 @@
                         android:id="@+id/temp_min"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/example_min_temp" />
+                        android:text="@string/text_min_temp" />
                     <Space
                         android:layout_width="@dimen/space_50"
                         android:layout_height="wrap_content" />
@@ -104,7 +104,7 @@
                         android:id="@+id/temp_max"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/example_max_temp" />
+                        android:text="@string/text_max_temp" />
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -150,7 +150,7 @@
                                 android:id="@+id/wind_data"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/example_wind"
+                                android:text="@string/text_wind"
                                 android:textSize="@dimen/text_14" />
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
@@ -187,7 +187,7 @@
                                 android:id="@+id/humidity_data"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/example_humidity"
+                                android:text="@string/text_humidity"
                                 android:textSize="@dimen/text_14" />
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
@@ -230,7 +230,7 @@
                                 android:id="@+id/pressure"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/example_pressure"
+                                android:text="@string/text_pressure"
                                 android:textSize="@dimen/text_14" />
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
