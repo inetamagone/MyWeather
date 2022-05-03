@@ -1,7 +1,6 @@
 package com.example.myweather.viewModels
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,33 +8,21 @@ import com.example.myweather.network.currentData.CurrentWeatherData
 import com.example.myweather.repository.CurrentWeatherRepository
 import kotlinx.coroutines.launch
 
-private const val TAG = "WeatherViewModel"
-
 class WeatherViewModel(val repository: CurrentWeatherRepository) : ViewModel() {
-    lateinit var currentList: LiveData<CurrentWeatherData>
-    lateinit var searchList: LiveData<CurrentWeatherData>
 
-    fun getCurrentWeatherApi() {
+    fun getCurrentWeatherApi(context: Context) =
         viewModelScope.launch {
-            repository.getCurrentWeatherApi()
+            repository.getCurrentWeatherApi(context)
         }
-    }
 
-    fun searchCurrentWeatherApi(searchQuery: String) {
+    fun searchCurrentWeatherApi(context: Context, searchQuery: String) =
         viewModelScope.launch {
-            repository.searchCurrentWeatherApi(searchQuery)
+            repository.searchCurrentWeatherApi(context, searchQuery)
         }
-    }
 
-    fun getDataFromDb(): LiveData<CurrentWeatherData> {
-        currentList = repository.getWeatherDataFromDb()
-        Log.d(TAG, "Data got back from db: $currentList")
-        return currentList
-    }
+    fun getDataFromDb(): LiveData<CurrentWeatherData> =
+        repository.getWeatherDataFromDb()
 
-    fun getSearchFromDb(context: Context, searchQuery: String): LiveData<CurrentWeatherData> {
-        searchList = repository.getWeatherSearchFromDb(searchQuery)
-        Log.d(TAG, "Data got back from db: $searchList")
-        return searchList
-    }
+    fun getSearchFromDb(searchQuery: String): LiveData<CurrentWeatherData> =
+        repository.getWeatherSearchFromDb(searchQuery)
 }

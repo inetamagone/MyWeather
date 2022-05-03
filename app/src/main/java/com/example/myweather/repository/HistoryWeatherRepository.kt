@@ -6,19 +6,17 @@ import com.example.myweather.network.currentData.CurrentWeatherData
 
 class HistoryWeatherRepository(val database: CurrentWeatherDatabase) {
 
-    fun getHistory(): LiveData<List<CurrentWeatherData>> {
-        return database.getWeatherDao().getHistory()
-    }
+    fun getHistory(): LiveData<List<CurrentWeatherData>> =
+        database.getWeatherDao().getHistory()
 
-    suspend fun deleteAllHistory() {
+    suspend fun deleteAllHistory() =
         database.getWeatherDao().deleteAllHistory()
-    }
 
     suspend fun deleteEntry(currentWeatherData: CurrentWeatherData) =
         database.getWeatherDao().deleteEntry(currentWeatherData)
 
-    fun filterWeather(sortBy: Int) : LiveData<List<CurrentWeatherData>>{
-        return database.getWeatherDao().filterWeather(sortBy)
-    }
+    fun filterWeather(sortBy: Int): LiveData<List<CurrentWeatherData>> =
+        database.getWeatherDao().filterWeather(sortBy)
+
 }
 

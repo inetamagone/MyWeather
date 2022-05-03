@@ -2,7 +2,9 @@ package com.example.myweather.repository
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
+import com.example.myweather.R
 import com.example.myweather.database.dateDatabase.DateWeatherDatabase
 import com.example.myweather.network.ApiService
 import com.example.myweather.network.dateData.DataList
@@ -44,7 +46,12 @@ class DateWeatherRepository {
                         response: Response<DateWeatherData>
                     ) {
                         if (!response.isSuccessful) {
-                            Log.d(TAG, "Unsuccessful network call")
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.unsuccessful_network_call),
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
                             return
                         }
                         val list = response.body()!!.list
@@ -57,7 +64,7 @@ class DateWeatherRepository {
                     }
 
                     override fun onFailure(call: Call<DateWeatherData>, t: Throwable) {
-                        Log.d(TAG, t.message ?: "Null message")
+                        Log.d(TAG, t.message ?: context.getString(R.string.null_message))
                     }
                 })
         }
@@ -66,7 +73,6 @@ class DateWeatherRepository {
             database = initializeDateDB(context)
             CoroutineScope(Dispatchers.IO).launch {
                 database.getDateWeatherDao().insertDataByDate(dataList)
-                Log.d(TAG, "Data inserted into db: $dataList")
             }
         }
 
@@ -81,8 +87,8 @@ class DateWeatherRepository {
             database.getDateWeatherDao().deleteAll()
         }
 
-        private fun initializeDateDB(context: Context): DateWeatherDatabase {
-            return DateWeatherDatabase.createDatabase(context)
-        }
+        private fun initializeDateDB(context: Context): DateWeatherDatabase =
+            DateWeatherDatabase.createDatabase(context)
+
     }
 }

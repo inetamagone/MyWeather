@@ -35,7 +35,6 @@ class FirstFragment : Fragment() {
     private lateinit var viewModel: WeatherViewModel
     private lateinit var binding: FragmentFirstBinding
 
-    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,24 +46,18 @@ class FirstFragment : Fragment() {
         val factory = CurrentModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[WeatherViewModel::class.java]
 
-        viewModel.getCurrentWeatherApi()
-        val dbData = viewModel.getDataFromDb()
-        Log.d(TAG, "onLaunch DBdata on launch: $dbData")
-        Log.d(TAG, "OnCreateView called")
+        viewModel.getCurrentWeatherApi(requireContext())
         return binding.root
     }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d(TAG, "onViewCreated called")
         super.onViewCreated(view, savedInstanceState)
 
-
-        viewModel.currentList.observe(viewLifecycleOwner) {
+        viewModel.getDataFromDb().observe(viewLifecycleOwner) {
             if (it == null) {
-                Log.d(TAG, "Data was not found onLaunch")
+                Log.d(TAG, getString(R.string.data_not_found_view_created))
             } else {
-                Log.d(TAG, "onLaunch DBdata found to populate: $it")
                 val updatedAt = it.dt.toLong()
                 val icon = it.weather[0].icon
                 val imageUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
@@ -103,24 +96,18 @@ class FirstFragment : Fragment() {
                 Glide.with(requireContext())
                     .load(imageUrl)
                     .into(requireActivity().findViewById(R.id.image_main)!!)
-                Log.d(TAG, "So I found data...")
             }
         }
 
         // Search function
         val searchIcon = view.findViewById<ImageView>(R.id.search_icon)
         searchIcon.setOnClickListener {
-            Log.d(TAG, "Search Button clicked")
             city = getCity()
-            viewModel.searchCurrentWeatherApi(city)
-            Log.d(TAG, "SearchApi called: $city")
-            viewModel.getSearchFromDb(requireContext(), city)
-            Log.d(TAG, "Search DbData called: $city")
-            viewModel.searchList.observe(viewLifecycleOwner) {
+            viewModel.searchCurrentWeatherApi(requireContext(), city)
+            viewModel.getSearchFromDb(city).observe(viewLifecycleOwner) {
                 if (it == null) {
-                    Log.d(TAG, "Data was not found in search")
+                    Log.d(TAG, getString(R.string.data_not_found_in_search))
                 } else {
-                    Log.d(TAG, "Search CurrentWeatherData it got: $it")
                     val updatedAt = it.dt.toLong()
                     val icon = it.weather[0].icon
                     val imageUrl = "https://openweathermap.org/img/wn/$icon@2x.png"
@@ -159,7 +146,6 @@ class FirstFragment : Fragment() {
                     Glide.with(requireContext())
                         .load(imageUrl)
                         .into(requireActivity().findViewById(R.id.image_main)!!)
-                    Log.d(TAG, "So I populated searched data")
                 }
             }
         }
@@ -167,7 +153,6 @@ class FirstFragment : Fragment() {
         val navController = Navigation.findNavController(view)
 
         view.findViewById<Button>(R.id.button_next).setOnClickListener {
-            Log.d(TAG, "Button clicked to navigate to the SecondFragment")
             val cityString = view.findViewById<TextView>(R.id.city_name).text.toString()
 
             navController.navigate(R.id.action_firstFragment_to_secondFragment, Bundle().apply {
@@ -180,16 +165,22 @@ class FirstFragment : Fragment() {
         // History view
         val historyButton = view.findViewById<Button>(R.id.button_history)
         historyButton.setOnClickListener {
-            Log.d(TAG, "History Button clicked")
-
             navController.navigate(R.id.action_firstFragment_to_historyFragment, Bundle())
         }
     }
 
     private fun getCity(): String {
-        requireActivity().findViewById<TextInputEditText>(R.id.edit_city).apply {
-            return if (text.isNullOrBlank()) DEFAULT_CITY else text.formatting()
-        }
+        requireActivity().findViewById<TextInputEditText>(R.id.edit_city)
+            .apply {
+                when {
+                    text.isNullOrEmpty() -> city = DEFAULT_CITY
+                    else -> {
+                        city = text.formatting()
+                        setText("")
+                    }
+                }
+            }
+        return city
     }
 }
 

@@ -2,7 +2,6 @@ package com.example.myweather
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -16,8 +15,6 @@ import com.example.myweather.network.currentData.CurrentWeatherData
 import com.example.myweather.repository.HistoryWeatherRepository
 import com.example.myweather.viewModels.factories.HistoryModelFactory
 import com.example.myweather.viewModels.HistoryViewModel
-
-private const val TAG = "HistoryFragment"
 
 class HistoryFragment : Fragment() {
 
@@ -66,7 +63,7 @@ class HistoryFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 viewModel.deleteEntry(adapter.getItemByID(viewHolder.adapterPosition))
-                Toast.makeText(requireContext(), "Weather entry deleted!", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), getString(R.string.entry_deleted), Toast.LENGTH_SHORT)
                     .show()
             }
         }
@@ -77,9 +74,8 @@ class HistoryFragment : Fragment() {
     }
 
     // Delete all and filtering methods
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
         inflater.inflate(R.menu.options_menu, menu)
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val recyclerView = requireActivity().findViewById<RecyclerView>(R.id.history_recycler_view)
@@ -105,27 +101,26 @@ class HistoryFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun observeData(it: List<CurrentWeatherData>, recyclerView: RecyclerView) {
+    private fun observeData(it: List<CurrentWeatherData>, recyclerView: RecyclerView) =
         it.let {
             adapter = HistoryViewAdapter(it)
             recyclerView.adapter = adapter
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
         }
-    }
 
     private fun deleteAllHistory() {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setPositiveButton("OK") { _, _ ->
+        builder.setPositiveButton(getString(R.string.ok)) { _, _ ->
             viewModel.deleteAllHistory()
             Toast.makeText(
                 requireContext(),
-                "All Weather History is removed",
+                getString(R.string.weather_history_removed),
                 Toast.LENGTH_SHORT
             ).show()
         }
-        builder.setNegativeButton("No") { _, _ -> }
-        builder.setTitle("Delete All")
-        builder.setMessage("Do you want to delete all history?")
+        builder.setNegativeButton(getString(R.string.no)) { _, _ -> }
+        builder.setTitle(getString(R.string.delete_all))
+        builder.setMessage(getString(R.string.question_delete_all))
         builder.create().show()
     }
 }

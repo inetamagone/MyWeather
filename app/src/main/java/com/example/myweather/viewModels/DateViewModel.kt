@@ -10,25 +10,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class DateViewModel: ViewModel() {
+class DateViewModel : ViewModel() {
 
-    lateinit var dateWeatherList: LiveData<List<DataList>>
-
-    // Second Fragment
-    fun getDateWeatherApi(context: Context, lat: String, lon: String) {
+    fun getDateWeatherApi(context: Context, lat: String, lon: String) =
         viewModelScope.launch {
             DateWeatherRepository.getDateWeatherApi(context, lat, lon)
         }
-    }
 
-    fun getAllByDate(context: Context): LiveData<List<DataList>> {
-        dateWeatherList = DateWeatherRepository.getDbByDate(context)
-        return dateWeatherList
-    }
+    fun getAllByDate(context: Context): LiveData<List<DataList>> =
+        DateWeatherRepository.getDbByDate(context)
 
-    fun deleteAllDateList(context: Context) {
+    fun deleteAllDateList(context: Context) =
         viewModelScope.launch(Dispatchers.IO) {
             DateWeatherRepository.deleteAll(context)
         }
-    }
 }
