@@ -62,4 +62,8 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
                 }
         viewModel.deleteAllDateList(requireContext())
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

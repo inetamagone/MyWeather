@@ -161,6 +161,10 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             }
         return city
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
 
 private fun Editable?.formatting(): String {

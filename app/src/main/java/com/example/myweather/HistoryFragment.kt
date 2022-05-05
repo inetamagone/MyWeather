@@ -127,4 +127,8 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
         builder.setMessage(getString(R.string.question_delete_all))
         builder.create().show()
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
