@@ -7,6 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -30,8 +34,8 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
     private var _binding: FragmentFirstBinding? = null
     private val binding get() = _binding!!
 
-    private var mRootView: View? = null
-    private var mIsFirstLoad = false
+    private var rootView: View? = null
+    private var isFirstLoad = false
 
     private lateinit var viewModel: WeatherViewModel
 
@@ -41,26 +45,20 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
     ): View? {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
 
-        if (mRootView == null) {
-            Log.d(TAG, "onCreate view: $mRootView")
-            mRootView = _binding?.root
-            mIsFirstLoad = true
-            Log.d(TAG, "onCreate isFirstLoad: $mIsFirstLoad")
+        if (rootView == null) {
+            rootView = binding.root
+            isFirstLoad = true
         } else {
-            Log.d(TAG, "onCreate view: $mRootView")
-            mIsFirstLoad = false
-            Log.d(TAG, "onCreate isFirstLoad: $mIsFirstLoad")
+            isFirstLoad = false
         }
-        return mRootView
-        //return binding.root
+        return rootView
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "CutPasteId")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (mIsFirstLoad) {
-            Log.d(TAG, "is firstLoad: $mIsFirstLoad")
+        if (isFirstLoad) {
             val repository = CurrentWeatherRepository(CurrentWeatherDatabase(requireContext()))
             val factory = CurrentModelFactory(repository)
             viewModel = ViewModelProvider(this, factory)[WeatherViewModel::class.java]
@@ -110,10 +108,8 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             }
 
         } else {
-            Log.d(TAG, "is firstLoad: $mIsFirstLoad")
+            // Load from array in viewModel
             val updatedAt = viewModel.savedData[0].dt.toLong()
-            Log.d("FirstFragment", "${viewModel.savedData[0]}")
-
             val updatedText = SimpleDateFormat(
                 "dd/MM/yyyy  HH:mm",
                 Locale.ENGLISH
@@ -158,17 +154,17 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
                 .into(binding.imageMain)
         }
 
-
         // Search function
-        val searchIcon = binding.searchIcon
+        val searchIcon = requireActivity().findViewById<ImageView>(R.id.search_icon)
+
         searchIcon.setOnClickListener {
             Log.d(TAG, "Search button clicked")
-            mIsFirstLoad = true
+//            val editText = requireActivity().findViewById<EditText>(R.id.edit_city)
+//            val city = editText.text.formatting()
+//            editText.setText("")
             city = getCity()
             Log.d(TAG, "the city searched: $city")
             viewModel.searchCurrentWeatherApi(requireContext(), city)
-
-            Log.d(TAG, "First load in search: $mIsFirstLoad")
             viewModel.getSearchFromDb(city).observe(viewLifecycleOwner) {
                 if (it == null) {
                     Log.d(TAG, "Data not found in search, it: $it")
@@ -188,36 +184,35 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
                     lat = it.coord.lat.toString()
                     lon = it.coord.lon.toString()
 
-                    binding.apply {
-                        cityName.text = getString(R.string.text_city, it.name, it.sys.country)
-                        updatedTime.text = getString(R.string.text_updated, updatedText)
-                        conditions.text =
-                            getString(R.string.text_conditions, it.weather[0].description)
-                        temperature.text = getString(R.string.text_temp, it.main.temp.toString())
-                        tempMin.text = getString(R.string.text_min_temp, it.main.tempMin.toString())
-                        tempMax.text = getString(R.string.text_max_temp, it.main.tempMax.toString())
-                        windData.text = getString(R.string.text_wind, it.wind.speed.toString())
-                        humidityData.text =
+                    requireActivity().findViewById<TextView>(R.id.city_name).text = getString(R.string.text_city, it.name, it.sys.country)
+                    requireActivity().findViewById<TextView>(R.id.updated_time).text = getString(R.string.text_updated, updatedText)
+
+                    requireActivity().findViewById<TextView>(R.id.conditions).text = getString(R.string.text_conditions, it.weather[0].description)
+                    requireActivity().findViewById<TextView>(R.id.temperature).text = getString(R.string.text_temp, it.main.temp.toString())
+                    requireActivity().findViewById<TextView>(R.id.temp_min).text = getString(R.string.text_min_temp, it.main.tempMin.toString())
+                    requireActivity().findViewById<TextView>(R.id.temp_max).text = getString(R.string.text_max_temp, it.main.tempMax.toString())
+                    requireActivity().findViewById<TextView>(R.id.wind_data).text = getString(R.string.text_wind, it.wind.speed.toString())
+                    requireActivity().findViewById<TextView>(R.id.humidity_data).text =
                             getString(R.string.text_humidity, it.main.humidity.toString() + " %")
-                        pressure.text =
+                    requireActivity().findViewById<TextView>(R.id.pressure).text =
                             getString(R.string.text_pressure, it.main.pressure.toString())
-                    }
 
                     // Image icon
                     Glide.with(requireContext())
                         .load("https://openweathermap.org/img/wn/$icon@2x.png")
-                        .into(binding.imageMain)
+                        .into(requireActivity().findViewById(R.id.image_main))
 
                     viewModel.savedData.clear()
                     viewModel.saveToRestore(it)
                 }
             }
         }
+
         // Navigation to the Second Fragment
         val navController = Navigation.findNavController(view)
 
-        binding.buttonNext.setOnClickListener {
-            val cityString = binding.cityName.text.toString()
+        requireActivity().findViewById<Button>(R.id.button_next).setOnClickListener {
+            val cityString = requireActivity().findViewById<TextView>(R.id.city_name).text.toString()
 
             navController.navigate(R.id.action_firstFragment_to_secondFragment, Bundle().apply {
                 putString("cityName", cityString)
@@ -227,13 +222,18 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         }
 
         // History view
-        binding.buttonHistory.setOnClickListener {
+        requireActivity().findViewById<Button>(R.id.button_history).setOnClickListener {
             navController.navigate(R.id.action_firstFragment_to_historyFragment, Bundle())
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun getCity(): String {
-        binding.editCity
+        requireActivity().findViewById<EditText>(R.id.edit_city)
             .apply {
                 when {
                     text.isNullOrEmpty() -> city = DEFAULT_CITY
@@ -244,11 +244,6 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
                 }
             }
         return city
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
 
