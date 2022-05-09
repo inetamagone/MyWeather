@@ -21,5 +21,4 @@ data class CurrentWeatherData(
     val weather: List<Weather>,
     @Embedded
     val wind: Wind
-
 )

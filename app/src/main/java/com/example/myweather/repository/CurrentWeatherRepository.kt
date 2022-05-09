@@ -10,6 +10,7 @@ import com.example.myweather.database.currentDatabase.CurrentWeatherDatabase
 import com.example.myweather.network.ApiService
 import com.example.myweather.network.currentData.CurrentWeatherData
 import com.example.myweather.utils.BASE_URL
+import com.example.myweather.viewModels.WeatherViewModel
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +25,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 private const val TAG = "CurrentWeatherRepository"
 
 class CurrentWeatherRepository(val database: CurrentWeatherDatabase) {
+
+    private val viewModel: WeatherViewModel? = null
 
     fun getCurrentWeatherApi(context: Context) {
         val moshi = Moshi.Builder()
@@ -55,6 +58,7 @@ class CurrentWeatherRepository(val database: CurrentWeatherDatabase) {
                     val apiResponseData = response.body()!!
                     CoroutineScope(Dispatchers.IO).launch {
                         insertData(apiResponseData)
+                        viewModel?.saveState(apiResponseData)
                     }
                 }
 
