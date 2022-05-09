@@ -16,6 +16,7 @@ class WeatherViewModel(val repository: CurrentWeatherRepository, state: SavedSta
         return savedStateData
     }
 
+    // Called from WeatherWorker
     fun getCurrentWeatherApi(context: Context) =
         viewModelScope.launch {
             repository.getCurrentWeatherApi(context)

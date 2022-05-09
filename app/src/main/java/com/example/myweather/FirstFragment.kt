@@ -9,15 +9,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.example.myweather.database.currentDatabase.CurrentWeatherDatabase
 import com.example.myweather.databinding.FragmentFirstBinding
+import com.example.myweather.network.WeatherWorker
 import com.example.myweather.repository.CurrentWeatherRepository
 import com.example.myweather.utils.DEFAULT_CITY
 import com.example.myweather.viewModels.factories.CurrentModelFactory
 import com.example.myweather.viewModels.WeatherViewModel
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "FirstFragment"
 private var city = ""
@@ -33,11 +37,8 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val repository = CurrentWeatherRepository(CurrentWeatherDatabase(requireContext()))
-        val factory = CurrentModelFactory(this, repository)
-        viewModel = ViewModelProvider(this, factory)[WeatherViewModel::class.java]
-        // Api call
-        viewModel.getCurrentWeatherApi(requireContext())
+        // Api call, saving to the database
+        setPeriodicWorkRequest()
     }
 
     override fun onCreateView(
@@ -50,6 +51,11 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val repository = CurrentWeatherRepository(CurrentWeatherDatabase(requireContext()))
+        val factory = CurrentModelFactory(this, repository)
+        viewModel = ViewModelProvider(this, factory)[WeatherViewModel::class.java]
+
         viewModel.getDataFromDb().observe(viewLifecycleOwner) {
             if (it == null) {
                 Log.d(TAG, getString(R.string.data_not_found_view_created))
@@ -100,9 +106,18 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         searchIcon.setOnClickListener {
             city = getCity()
             viewModel.searchCurrentWeatherApi(requireContext(), city)
+
             viewModel.getSearchFromDb(city).observe(viewLifecycleOwner) {
                 if (it == null) {
                     Log.d(TAG, getString(R.string.data_not_found_in_search))
+                } else {
+                    viewModel.saveState(it)
+                }
+                }
+
+                viewModel.savedStateData.observe(viewLifecycleOwner) {
+                if (it == null) {
+                    Log.d(TAG, getString(R.string.saved_state_data_not_found))
                 } else {
                     val updatedAt = it.dt.toLong()
                     val updatedText = SimpleDateFormat(
@@ -153,6 +168,15 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         binding.buttonHistory.setOnClickListener {
             navController.navigate(R.id.action_firstFragment_to_historyFragment, Bundle())
         }
+    }
+
+    private fun setPeriodicWorkRequest() {
+        val periodicWorkRequest = PeriodicWorkRequest
+            .Builder(WeatherWorker::class.java, 15,  TimeUnit.MINUTES)
+            .build()
+        WorkManager
+            .getInstance()
+            .enqueue(periodicWorkRequest)
     }
 
     private fun getCity(): String {
