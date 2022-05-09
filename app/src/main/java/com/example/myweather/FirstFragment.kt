@@ -1,6 +1,5 @@
 package com.example.myweather
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -32,28 +31,36 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
     private lateinit var viewModel: WeatherViewModel
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val repository = CurrentWeatherRepository(CurrentWeatherDatabase(requireContext()))
+        val factory = CurrentModelFactory(this, repository)
+        viewModel = ViewModelProvider(this, factory)[WeatherViewModel::class.java]
+        // Api call
+        viewModel.getCurrentWeatherApi(requireContext())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val repository = CurrentWeatherRepository(CurrentWeatherDatabase(requireContext()))
-        val factory = CurrentModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory)[WeatherViewModel::class.java]
-
-        viewModel.getCurrentWeatherApi(requireContext())
-
         viewModel.getDataFromDb().observe(viewLifecycleOwner) {
             if (it == null) {
                 Log.d(TAG, getString(R.string.data_not_found_view_created))
+            } else {
+                // Save to viewModel
+                viewModel.saveState(it)
+            }
+        }
+        viewModel.savedStateData.observe(viewLifecycleOwner) {
+            if (it == null) {
+                Log.d(TAG, getString(R.string.saved_state_data_not_found))
             } else {
                 val updatedAt = it.dt.toLong()
                 val updatedText = SimpleDateFormat(

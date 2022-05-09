@@ -1,14 +1,20 @@
 package com.example.myweather.viewModels
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.myweather.network.currentData.CurrentWeatherData
 import com.example.myweather.repository.CurrentWeatherRepository
 import kotlinx.coroutines.launch
 
-class WeatherViewModel(val repository: CurrentWeatherRepository) : ViewModel() {
+class WeatherViewModel(val repository: CurrentWeatherRepository, state: SavedStateHandle) : ViewModel() {
+
+    private var currentWeatherData: CurrentWeatherData? = null
+    val savedStateData = state.getLiveData("liveData", currentWeatherData)
+
+    fun saveState(currentWeatherData: CurrentWeatherData) : MutableLiveData<CurrentWeatherData?>{
+        savedStateData.value = currentWeatherData
+        return savedStateData
+    }
 
     fun getCurrentWeatherApi(context: Context) =
         viewModelScope.launch {
@@ -20,8 +26,9 @@ class WeatherViewModel(val repository: CurrentWeatherRepository) : ViewModel() {
             repository.searchCurrentWeatherApi(context, searchQuery)
         }
 
-    fun getDataFromDb(): LiveData<CurrentWeatherData> =
-        repository.getWeatherDataFromDb()
+    fun getDataFromDb(): LiveData<CurrentWeatherData> {
+        return repository.getWeatherDataFromDb()
+    }
 
     fun getSearchFromDb(searchQuery: String): LiveData<CurrentWeatherData> =
         repository.getWeatherSearchFromDb(searchQuery)
