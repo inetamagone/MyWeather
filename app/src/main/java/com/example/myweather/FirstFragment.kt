@@ -37,8 +37,12 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Api call, saving to the database
-        setPeriodicWorkRequest()
+        val repository = CurrentWeatherRepository(CurrentWeatherDatabase(requireContext()))
+        val factory = CurrentModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory)[WeatherViewModel::class.java]
+
+        viewModel.getWeatherApiWithWorker(requireContext())
+        Log.d(TAG, "OnCreate, doing API call")
     }
 
     override fun onCreateView(
@@ -46,79 +50,80 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        Log.d(TAG, "OnCreateView")
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val repository = CurrentWeatherRepository(CurrentWeatherDatabase(requireContext()))
-        val factory = CurrentModelFactory(this, repository)
-        viewModel = ViewModelProvider(this, factory)[WeatherViewModel::class.java]
+        val workManager = WorkManager.getInstance(requireContext())
+        val periodicWorkRequest = PeriodicWorkRequest
+            .Builder(WeatherWorker::class.java, 16, TimeUnit.MINUTES)
 
-        viewModel.getDataFromDb().observe(viewLifecycleOwner) {
-            if (it == null) {
-                Log.d(TAG, getString(R.string.data_not_found_view_created))
-            } else {
-                // Save to viewModel
-                viewModel.saveState(it)
-            }
-        }
-        viewModel.savedStateData.observe(viewLifecycleOwner) {
-            if (it == null) {
-                Log.d(TAG, getString(R.string.saved_state_data_not_found))
-            } else {
-                val updatedAt = it.dt.toLong()
-                val updatedText = SimpleDateFormat(
-                    "dd/MM/yyyy  HH:mm",
-                    Locale.ENGLISH
-                ).format(
-                    Date(updatedAt * 1000)
-                )
-                val icon = it.weather[0].icon
+        workManager.getWorkInfoByIdLiveData(periodicWorkRequest.build().id)
+            .observe(viewLifecycleOwner) {
+                val dataIsInsertedIntoDb = it.outputData.getBoolean(WeatherWorker.DATABASE_DATA, false)
+                if (dataIsInsertedIntoDb) {
+                    viewModel.getDataFromDb()?.observe(viewLifecycleOwner) {
+                        if (it == null) {
+                            Log.d(TAG, getString(R.string.data_not_found))
+                        } else {
+                            Log.d(TAG, "OnViewCreated, populating views")
+                            val updatedAt = it.dt.toLong()
+                            val updatedText = SimpleDateFormat(
+                                "dd/MM/yyyy  HH:mm",
+                                Locale.ENGLISH
+                            ).format(
+                                Date(updatedAt * 1000)
+                            )
+                            val icon = it.weather[0].icon
 
-                // For the API call in the SecondFragment
-                lat = it.coord.lat.toString()
-                lon = it.coord.lon.toString()
+                            // For the API call in the SecondFragment
+                            lat = it.coord.lat.toString()
+                            lon = it.coord.lon.toString()
 
-                binding.apply {
-                    cityName.text = getString(R.string.text_city, it.name, it.sys.country)
-                    updatedTime.text = getString(R.string.text_updated, updatedText)
-                    conditions.text = getString(R.string.text_conditions, it.weather[0].description)
-                    temperature.text = getString(R.string.text_temp, it.main.temp.toString())
-                    tempMin.text = getString(R.string.text_min_temp, it.main.tempMin.toString())
-                    tempMax.text = getString(R.string.text_max_temp, it.main.tempMax.toString())
-                    windData.text = getString(R.string.text_wind, it.wind.speed.toString())
-                    humidityData.text = getString(R.string.text_humidity, it.main.humidity.toString() + " %")
-                    pressure.text = getString(R.string.text_pressure, it.main.pressure.toString())
+                            binding.apply {
+                                cityName.text = getString(R.string.text_city, it.name, it.sys.country)
+                                updatedTime.text = getString(R.string.text_updated, updatedText)
+                                conditions.text = getString(R.string.text_conditions, it.weather[0].description)
+                                temperature.text = getString(R.string.text_temp, it.main.temp.toString())
+                                tempMin.text = getString(R.string.text_min_temp, it.main.tempMin.toString())
+                                tempMax.text = getString(R.string.text_max_temp, it.main.tempMax.toString())
+                                windData.text = getString(R.string.text_wind, it.wind.speed.toString())
+                                humidityData.text =
+                                    getString(R.string.text_humidity, it.main.humidity.toString() + " %")
+                                pressure.text = getString(R.string.text_pressure, it.main.pressure.toString())
+                            }
+
+                            // Image icon
+                            Glide.with(requireContext())
+                                .load("https://openweathermap.org/img/wn/$icon@2x.png")
+                                // http://openweathermap.org/img/wn/04d@2x.png
+                                .into(binding.imageMain)
+                        }
+                    }
+                } else {
+                    return@observe
                 }
-
-                // Image icon
-                Glide.with(requireContext())
-                    .load("https://openweathermap.org/img/wn/$icon@2x.png")
-                    // http://openweathermap.org/img/wn/04d@2x.png
-                    .into(binding.imageMain)
             }
-        }
+
+
 
         // Search function
         val searchIcon = binding.searchIcon
         searchIcon.setOnClickListener {
             city = getCity()
-            viewModel.searchCurrentWeatherApi(requireContext(), city)
+            // API call and save to db here
+            viewModel.searchWeatherApiWithWorker(requireContext(), city)
+            viewModel.getSearchFromDb(city)
 
-            viewModel.getSearchFromDb(city).observe(viewLifecycleOwner) {
+            viewModel.liveSearchData?.observe(viewLifecycleOwner) {
+                Log.d(TAG, "liveSearchData.observe in Search")
                 if (it == null) {
-                    Log.d(TAG, getString(R.string.data_not_found_in_search))
+                    Log.d(TAG, getString(R.string.data_not_found))
                 } else {
-                    viewModel.saveState(it)
-                }
-                }
-
-                viewModel.savedStateData.observe(viewLifecycleOwner) {
-                if (it == null) {
-                    Log.d(TAG, getString(R.string.saved_state_data_not_found))
-                } else {
+                    Log.d(TAG, "Populating views in Search")
                     val updatedAt = it.dt.toLong()
                     val updatedText = SimpleDateFormat(
                         "dd/MM/yyyy  HH:mm",
@@ -135,13 +140,16 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
                     binding.apply {
                         cityName.text = getString(R.string.text_city, it.name, it.sys.country)
                         updatedTime.text = getString(R.string.text_updated, updatedText)
-                        conditions.text = getString(R.string.text_conditions, it.weather[0].description)
+                        conditions.text =
+                            getString(R.string.text_conditions, it.weather[0].description)
                         temperature.text = getString(R.string.text_temp, it.main.temp.toString())
                         tempMin.text = getString(R.string.text_min_temp, it.main.tempMin.toString())
                         tempMax.text = getString(R.string.text_max_temp, it.main.tempMax.toString())
                         windData.text = getString(R.string.text_wind, it.wind.speed.toString())
-                        humidityData.text = getString(R.string.text_humidity, it.main.humidity.toString() + " %")
-                        pressure.text = getString(R.string.text_pressure, it.main.pressure.toString())
+                        humidityData.text =
+                            getString(R.string.text_humidity, it.main.humidity.toString() + " %")
+                        pressure.text =
+                            getString(R.string.text_pressure, it.main.pressure.toString())
                     }
 
                     // Image icon
@@ -170,15 +178,6 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         }
     }
 
-    private fun setPeriodicWorkRequest() {
-        val periodicWorkRequest = PeriodicWorkRequest
-            .Builder(WeatherWorker::class.java, 15,  TimeUnit.MINUTES)
-            .build()
-        WorkManager
-            .getInstance()
-            .enqueue(periodicWorkRequest)
-    }
-
     private fun getCity(): String {
         binding.editCity
             .apply {
@@ -192,6 +191,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             }
         return city
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

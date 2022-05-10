@@ -24,10 +24,10 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val TAG = "WeatherWorker"
+private const val TAG = "SearchWorker"
 
-class WeatherWorker(val context: Context, params: WorkerParameters) :
-    CoroutineWorker(context, params) {
+
+class SearchWorker(val context: Context, params: WorkerParameters): CoroutineWorker(context, params) {
 
     companion object{
         const val DATABASE_DATA = "database_data"
@@ -37,6 +37,7 @@ class WeatherWorker(val context: Context, params: WorkerParameters) :
 
     @SuppressLint("SimpleDateFormat")
     override suspend fun doWork(): Result {
+        val city = inputData.getString("QUERY_CITY")
         val moshi = Moshi.Builder()
             .addLast(KotlinJsonAdapterFactory()).build()
         val retrofit = Retrofit.Builder()
@@ -46,14 +47,13 @@ class WeatherWorker(val context: Context, params: WorkerParameters) :
 
         val apiService: ApiService = retrofit.create(ApiService::class.java)
         // API request
-        apiService.getCurrentWeather().enqueue(
+        apiService.searchCurrentWeather(city!!).enqueue(
             object : Callback<CurrentWeatherData> {
                 @SuppressLint("LongLogTag")
                 override fun onResponse(
                     call: Call<CurrentWeatherData>,
                     response: Response<CurrentWeatherData>
                 ) {
-                    Log.d(TAG, response.toString())
                     if (!response.isSuccessful) {
                         Toast.makeText(
                             context,
@@ -65,13 +65,12 @@ class WeatherWorker(val context: Context, params: WorkerParameters) :
                     }
                     val apiResponseData = response.body()!!
                     CoroutineScope(Dispatchers.IO).launch {
-                        val dao = CurrentWeatherDatabase.createDatabase(applicationContext)
-                            .getWeatherDao()
+                        val dao = CurrentWeatherDatabase.createDatabase(applicationContext).getWeatherDao()
                         dao.insertData(apiResponseData)
                         dataIsInserted = true
 
                         Data.Builder()
-                            .putBoolean(SearchWorker.DATABASE_DATA, dataIsInserted)
+                            .putBoolean(DATABASE_DATA, dataIsInserted)
                             .build()
                         Log.d(TAG, "Inserted from Worker: $apiResponseData")
                     }
@@ -79,16 +78,14 @@ class WeatherWorker(val context: Context, params: WorkerParameters) :
 
                 @SuppressLint("LongLogTag")
                 override fun onFailure(call: Call<CurrentWeatherData>, t: Throwable) {
-                    Log.d(
-                        TAG, t.message ?: context.getString(R.string.null_message)
-                    )
+                    Log.d(TAG, t.message ?: context.getString(R.string.null_message))
                 }
             })
 
         // For api call logging
         val time = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
         val currentDate = time.format(Date())
-        Log.i(TAG, "Completed $currentDate")
+        Log.i(TAG,"Completed $currentDate")
 
         return Result.success()
     }

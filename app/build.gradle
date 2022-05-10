@@ -81,8 +81,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
 
     // Work Manager
-    implementation 'android.arch.work:work-runtime-ktx:1.0.1'
-    implementation 'androidx.work:work-runtime:2.8.0-alpha02'
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     testImplementation 'junit:junit:4.13.2'

@@ -43,5 +43,5 @@
     <string name="no">No</string>
     <string name="delete_all">Delete All</string>
     <string name="question_delete_all">Do you want to delete all history?</string>
-    <string name="saved_state_data_not_found">Saved State data is not found!</string>
+    <string name="data_not_found">Data is not found!</string>
 </resources>
