@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -62,15 +63,21 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         val periodicWorkRequest = PeriodicWorkRequest
             .Builder(WeatherWorker::class.java, 16, TimeUnit.MINUTES)
 
+//        workManager.getWorkInfoByIdLiveData(periodicWorkRequest.build().id)
+//            .observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+//                if(it.state == WorkInfo.State.SUCCEEDED) {
+//                    val stringArray = it.outputData.getStringArray(WeatherWorker.DATABASE_DATA)
+//                    Log.d(TAG, "StringArray: $stringArray")
+//                }
+//            })
         workManager.getWorkInfoByIdLiveData(periodicWorkRequest.build().id)
             .observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-                if(it.state == WorkInfo.State.SUCCEEDED) {
-                    val stringArray = it.outputData.getStringArray("DATABASE_DATA")
-                    Log.d(TAG, "StringArray: $stringArray")
+                it.state.name
+                if(it.state.isFinished){
+                    val array = it.outputData.getStringArray(WeatherWorker.DATABASE_DATA)
+                    Log.d(TAG, "StringArray: $array")
                 }
             })
-
-
 
         viewModel.getDataFromDb()?.observe(viewLifecycleOwner) {
             if (it == null) {
@@ -112,17 +119,15 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
         }
 
-
         // Search function
         val searchIcon = binding.searchIcon
         searchIcon.setOnClickListener {
             city = getCity()
             // API call and save to db here
             viewModel.searchWeatherApiWithWorker(requireContext(), city)
-            viewModel.getSearchFromDb(city)
 
-            viewModel.liveSearchData?.observe(viewLifecycleOwner) {
-                Log.d(TAG, "liveSearchData.observe in Search")
+            viewModel.getSearchFromDb(city)?.observe(viewLifecycleOwner) {
+                Log.d(TAG, "getSearchFromDb(city)")
                 if (it == null) {
                     Log.d(TAG, getString(R.string.data_not_found))
                 } else {

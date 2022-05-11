@@ -37,7 +37,7 @@ class WeatherViewModel(val repository: CurrentWeatherRepository) : ViewModel() {
             .enqueue(periodicWorkRequest.build())
 //        workManager
 //            .getWorkInfoByIdLiveData(periodicWorkRequest.build().id).observeForever(Observer {
-//                val workerData = it.outputData.getString(SearchWorker.DB_RESULT)
+//                val workerData = it.outputData.getStringArray(WeatherWorker.DATABASE_DATA)
 //                Log.d(TAG, "workerSearchData: $workerData")
 //            })
     }

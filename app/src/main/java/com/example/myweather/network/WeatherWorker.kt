@@ -21,7 +21,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 private const val TAG = "WeatherWorker"
 
@@ -36,7 +35,6 @@ class WeatherWorker(val context: Context, params: WorkerParameters) :
     override suspend fun doWork(): Result {
 
         return try {
-            var data: Data? = null
 
             val moshi = Moshi.Builder()
                 .addLast(KotlinJsonAdapterFactory()).build()
@@ -93,11 +91,9 @@ class WeatherWorker(val context: Context, params: WorkerParameters) :
                             val dataArray = arrayOf(name, updatedText, icon, lat, lon, conditions, temperature, tempMin, tempMax, windData, humidityData, pressure)
 
                             Data.Builder()
-                                .putStringArray("DATABASE_DATA", dataArray)
+                                .putStringArray(DATABASE_DATA, dataArray)
                                 .build()
-                            //val outputData = workDataOf(DATABASE_DATA to apiResponseData)
-                            //data = passOutputData("DATABASE_DATA", apiResponseData)
-                        }
+                           }
                     }
                     @SuppressLint("LongLogTag")
                     override fun onFailure(call: Call<CurrentWeatherData>, t: Throwable) {
@@ -114,16 +110,4 @@ class WeatherWorker(val context: Context, params: WorkerParameters) :
             Result.failure()
         }
     }
-
-//    fun passOutputData(companionString: String, currentWeatherData: CurrentWeatherData): Data {
-//        val data = workDataOf(companionString to currentWeatherData)
-//        val periodicWorkRequestBuilder =
-//            PeriodicWorkRequestBuilder<WeatherWorker>(16, TimeUnit.MINUTES)
-//                .setInputData(data)
-//                .build()
-//        WorkManager
-//            .getInstance()
-//            .enqueue(periodicWorkRequestBuilder)
-//        return data
-//    }
 }
