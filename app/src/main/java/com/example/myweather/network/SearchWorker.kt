@@ -29,12 +29,6 @@ private const val TAG = "SearchWorker"
 
 class SearchWorker(val context: Context, params: WorkerParameters): CoroutineWorker(context, params) {
 
-    companion object{
-        const val DATABASE_DATA = "database_data"
-    }
-
-    private var dataIsInserted = false
-
     @SuppressLint("SimpleDateFormat")
     override suspend fun doWork(): Result {
         val city = inputData.getString("QUERY_CITY")
@@ -67,11 +61,6 @@ class SearchWorker(val context: Context, params: WorkerParameters): CoroutineWor
                     CoroutineScope(Dispatchers.IO).launch {
                         val dao = CurrentWeatherDatabase.createDatabase(applicationContext).getWeatherDao()
                         dao.insertData(apiResponseData)
-                        dataIsInserted = true
-
-                        Data.Builder()
-                            .putBoolean(DATABASE_DATA, dataIsInserted)
-                            .build()
                         Log.d(TAG, "Inserted from Worker: $apiResponseData")
                     }
                 }

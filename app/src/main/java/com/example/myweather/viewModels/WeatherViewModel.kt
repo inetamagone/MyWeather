@@ -45,7 +45,7 @@ class WeatherViewModel(val repository: CurrentWeatherRepository) : ViewModel() {
     fun searchWeatherApiWithWorker(context: Context, cityQuery: String) {
         val workManager = WorkManager.getInstance(context)
 
-        val periodicWorkRequest = PeriodicWorkRequest
+        val periodicWorkRequestSearch = PeriodicWorkRequest
             .Builder(SearchWorker::class.java, 16, TimeUnit.MINUTES)
 
         val queryData = Data.Builder()
@@ -57,13 +57,13 @@ class WeatherViewModel(val repository: CurrentWeatherRepository) : ViewModel() {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        periodicWorkRequest
+        periodicWorkRequestSearch
             .setConstraints(constraints)
             .setInputData(queryData.build())
             .build()
 
         workManager
-            .enqueue(periodicWorkRequest.build())
+            .enqueue(periodicWorkRequestSearch.build())
     }
 
     fun getDataFromDb(): LiveData<CurrentWeatherData>? {
