@@ -11,7 +11,7 @@ interface CurrentWeatherDao {
     suspend fun insertData(currentWeatherData: CurrentWeatherData)
 
     @Query("SELECT * FROM current_weather WHERE timestamp = (SELECT MAX(timestamp) FROM current_weather)")
-    fun getWeatherDataFromDb(): LiveData<CurrentWeatherData>
+    fun getWeatherDataFromDb(): CurrentWeatherData
 
     @Query(
         "SELECT * FROM current_weather " +

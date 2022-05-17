@@ -6,7 +6,7 @@ import com.example.myweather.network.currentData.CurrentWeatherData
 
 class CurrentWeatherRepository(val database: CurrentWeatherDatabase) {
 
-    fun getWeatherDataFromDb(): LiveData<CurrentWeatherData> =
+    fun getWeatherDataFromDb(): CurrentWeatherData =
         database.getWeatherDao().getWeatherDataFromDb()
 
     fun getWeatherSearchFromDb(
