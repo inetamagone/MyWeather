@@ -16,7 +16,7 @@ class DatabaseWorker(val context: Context, params: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         return try {
-            delay(300L)
+            delay(500L)
             val dao = CurrentWeatherDatabase.createDatabase(applicationContext)
                 .getWeatherDao()
 

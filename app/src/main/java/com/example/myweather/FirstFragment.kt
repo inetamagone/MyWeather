@@ -2,6 +2,7 @@ package com.example.myweather
 
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -101,7 +102,11 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
             viewModel.searchWeatherWithWorker(requireContext(), city)
                 .observe(viewLifecycleOwner) { workData ->
-                    onSearchStateChange(workData, binding)
+                    if (workData == null) {
+                        Log.d("FirstFragment", "WorkData is null")
+                    } else {
+                        onSearchStateChange(workData, binding)
+                    }
                 }
         }
         // Navigation to the Second Fragment
