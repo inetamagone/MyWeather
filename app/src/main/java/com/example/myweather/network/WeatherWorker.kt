@@ -19,22 +19,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.text.SimpleDateFormat
-import java.util.*
 
 private const val TAG = "WeatherWorker"
 
 class WeatherWorker(val context: Context, params: WorkerParameters) :
     CoroutineWorker(context, params) {
 
-    lateinit var dataArray: Array<String>
-    lateinit var outPutData: Data
-
-    companion object {
-        const val API_DATA = "api_data"
-    }
-
-    @SuppressLint("SimpleDateFormat")
     override suspend fun doWork(): Result {
 
         return try {
@@ -65,37 +55,11 @@ class WeatherWorker(val context: Context, params: WorkerParameters) :
                             return
                         }
                         val apiResponseData = response.body()!!
+                        // Insert into database
                         CoroutineScope(Dispatchers.IO).launch {
                             val dao = CurrentWeatherDatabase.createDatabase(applicationContext)
                                 .getWeatherDao()
                             dao.insertData(apiResponseData)
-                            Log.d(TAG, "Inserted from Worker: $apiResponseData")
-
-//                            val name = apiResponseData.name
-//                            val updatedAt = apiResponseData.dt.toLong()
-//                            val updatedText = SimpleDateFormat(
-//                                "dd/MM/yyyy  HH:mm",
-//                                Locale.ENGLISH
-//                            ).format(
-//                                Date(updatedAt * 1000)
-//                            )
-//                            val icon = apiResponseData.weather[0].icon
-//                            val lat = apiResponseData.coord.lat.toString()
-//                            val lon = apiResponseData.coord.lon.toString()
-//                            val conditions = apiResponseData.weather[0].description
-//                            val temperature = apiResponseData.main.temp.toString()
-//                            val tempMin = apiResponseData.main.tempMin.toString()
-//                            val tempMax = apiResponseData.main.tempMax.toString()
-//                            val windData = apiResponseData.wind.speed.toString()
-//                            val humidityData = apiResponseData.main.humidity.toString()
-//                            val pressure = apiResponseData.main.pressure.toString()
-//
-//                            dataArray = arrayOf(name, updatedText, icon, lat, lon, conditions, temperature, tempMin, tempMax, windData, humidityData, pressure)
-//
-//                            val outputData = Data.Builder()
-//                                .putStringArray(API_DATA, dataArray)
-//                                .build()
-//                            getOutPutData(outputData)
                            }
                     }
                     @SuppressLint("LongLogTag")
@@ -113,12 +77,4 @@ class WeatherWorker(val context: Context, params: WorkerParameters) :
             Result.failure()
         }
     }
-
-//    private fun getOutPutData(outputData: Data): Data {
-//        outPutData = outputData
-//        return outPutData
-//    }
-
-
-
 }

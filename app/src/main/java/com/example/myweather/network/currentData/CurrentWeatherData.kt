@@ -17,7 +17,6 @@ data class CurrentWeatherData(
     val name: String,
     @Embedded
     val sys: Sys,
-    val visibility: Int,
     val weather: List<Weather>,
     @Embedded
     val wind: Wind

@@ -10,6 +10,7 @@ import com.example.myweather.R
 import com.example.myweather.database.currentDatabase.CurrentWeatherDatabase
 import com.example.myweather.network.currentData.CurrentWeatherData
 import com.example.myweather.utils.BASE_URL
+import com.example.myweather.viewModels.WeatherViewModel
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.CoroutineScope
@@ -23,14 +24,12 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 private const val TAG = "SearchWorker"
 
-
 class SearchWorker(val context: Context, params: WorkerParameters): CoroutineWorker(context, params) {
 
-    @SuppressLint("SimpleDateFormat")
     override suspend fun doWork(): Result {
 
         return try {
-            val city = inputData.getString("QUERY_CITY")
+            val city = inputData.getString(WeatherViewModel.QUERY_CITY)
             val moshi = Moshi.Builder()
                 .addLast(KotlinJsonAdapterFactory()).build()
             val retrofit = Retrofit.Builder()
@@ -42,7 +41,6 @@ class SearchWorker(val context: Context, params: WorkerParameters): CoroutineWor
             // API request
             apiService.searchCurrentWeather(city!!).enqueue(
                 object : Callback<CurrentWeatherData> {
-                    @SuppressLint("LongLogTag")
                     override fun onResponse(
                         call: Call<CurrentWeatherData>,
                         response: Response<CurrentWeatherData>
@@ -57,14 +55,13 @@ class SearchWorker(val context: Context, params: WorkerParameters): CoroutineWor
                             return
                         }
                         val apiResponseData = response.body()!!
+                        // Insert into database
                         CoroutineScope(Dispatchers.IO).launch {
                             val dao = CurrentWeatherDatabase.createDatabase(applicationContext)
                                 .getWeatherDao()
                             dao.insertData(apiResponseData)
-                            Log.d(TAG, "Inserted from Worker: $apiResponseData")
                         }
                     }
-
                     @SuppressLint("LongLogTag")
                     override fun onFailure(call: Call<CurrentWeatherData>, t: Throwable) {
                         Log.d(TAG, t.message ?: context.getString(R.string.null_message))

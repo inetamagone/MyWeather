@@ -18,7 +18,7 @@ interface CurrentWeatherDao {
                 "WHERE timestamp = (SELECT MAX(timestamp) FROM current_weather) " +
                 " AND (name LIKE :searchQuery)"
     )
-    fun getWeatherSearchFromDb(searchQuery: String): LiveData<CurrentWeatherData>
+    fun getWeatherSearchFromDb(searchQuery: String): CurrentWeatherData
 
     // History Fragment
     @Query("SELECT * FROM current_weather ORDER BY timestamp DESC")
