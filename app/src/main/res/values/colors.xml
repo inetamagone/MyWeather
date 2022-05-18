@@ -10,4 +10,7 @@
 
     <color name="light_color">#c5cae9</color>
     <color name="light_text">#62757f</color>
+
+    <color name="background">#e1f5fe</color>
+    <color name="background_dark">#afc2cb</color>
 </resources>
