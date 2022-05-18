@@ -9,6 +9,7 @@ import com.example.myweather.network.SearchDatabaseWorker
 import com.example.myweather.network.SearchWorker
 import com.example.myweather.network.WeatherWorker
 import com.example.myweather.network.currentData.CurrentWeatherData
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "WeatherViewModel"
 class WeatherViewModel(state: SavedStateHandle) : ViewModel() {
@@ -31,6 +32,7 @@ class WeatherViewModel(state: SavedStateHandle) : ViewModel() {
 
         val dbWorkRequest = OneTimeWorkRequest
             .Builder(DatabaseWorker::class.java)
+            .setInitialDelay(1000, TimeUnit.MILLISECONDS)
             .build()
 
         val constraints = Constraints.Builder()

@@ -36,6 +36,8 @@ private var humidityString = ""
 private var pressureString = ""
 private var countryString = ""
 
+private const val TAG = "FirstFragment"
+
 class FirstFragment : Fragment(R.layout.fragment_first) {
 
     private var _binding: FragmentFirstBinding? = null
@@ -56,7 +58,11 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             if (savedData == null) {
                 viewModel.getWeatherWithWorker(requireContext())
                     .observe(viewLifecycleOwner) { workData ->
-                        onStateChange(workData, binding)
+                        if (workData == null) {
+                            return@observe
+                        } else {
+                            onStateChange(workData, binding)
+                        }
                     }
             } else {
                 val updatedAt = savedData.dt.toLong()
@@ -103,7 +109,8 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             viewModel.searchWeatherWithWorker(requireContext(), city)
                 .observe(viewLifecycleOwner) { workData ->
                     if (workData == null) {
-                        Log.d("FirstFragment", "WorkData is null")
+                        Log.d(TAG, "WorkData is null")
+                        return@observe
                     } else {
                         onSearchStateChange(workData, binding)
                     }
@@ -159,56 +166,64 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
     private fun onStateChange(workData: WorkInfo, binding: FragmentFirstBinding) =
         binding.apply {
             val outPutData = workData.outputData.getStringArray(DatabaseWorker.DB_DATA)
-            setViews(outPutData)
+            if (!outPutData.isNullOrEmpty()) {
+                setViews(outPutData)
+            } else {
+                Log.d(TAG, "dataArray is NULL or empty")
+            }
         }
 
     private fun onSearchStateChange(workData: WorkInfo, binding: FragmentFirstBinding) =
         binding.apply {
             val outPutData = workData.outputData.getStringArray(SearchDatabaseWorker.DB_SEARCH_DATA)
-            setViews(outPutData)
-        }
-
-    private fun setViews(dataArray: Array<String>?) {
-        if (dataArray != null) {
-            nameString = dataArray[0]
-            updatedAtString = dataArray[1]
-            val updatedText = SimpleDateFormat(
-                "dd/MM/yyyy  HH:mm",
-                Locale.ENGLISH
-            ).format(
-                Date(updatedAtString.toLong() * 1000)
-            )
-            iconString = dataArray[2]
-            lat = dataArray[3]
-            lon = dataArray[4]
-            conditionsString = dataArray[5]
-            temperatureString = dataArray[6]
-            tempMinString = dataArray[7]
-            tempMaxString = dataArray[8]
-            windString = dataArray[9]
-            humidityString = dataArray[10]
-            pressureString = dataArray[11]
-            countryString = dataArray[12]
-
-            binding.apply {
-                cityName.text = getString(R.string.text_city, nameString, countryString)
-                updatedTime.text = getString(R.string.text_updated, updatedText)
-                conditions.text = getString(R.string.text_conditions, conditionsString)
-                temperature.text = getString(R.string.text_temp, temperatureString)
-                tempMin.text = getString(R.string.text_min_temp, tempMinString)
-                tempMax.text = getString(R.string.text_max_temp, tempMaxString)
-                windData.text = getString(R.string.text_wind, windString)
-                humidityData.text =
-                    getString(R.string.text_humidity, "$humidityString %")
-                pressure.text = getString(R.string.text_pressure, pressureString)
+            if (!outPutData.isNullOrEmpty()) {
+                setViews(outPutData)
+            } else {
+                Log.d(TAG, "dataArray is NULL or empty")
             }
-
-            // Image icon
-            Glide.with(requireContext())
-                .load("https://openweathermap.org/img/wn/$iconString@2x.png")
-                // http://openweathermap.org/img/wn/04d@2x.png
-                .into(binding.imageMain)
         }
+
+    private fun setViews(dataArray: Array<String>) {
+        nameString = dataArray[0]
+        updatedAtString = dataArray[1]
+        val updatedAtLong = updatedAtString.toLongOrNull()
+        val updatedText = SimpleDateFormat(
+            "dd/MM/yyyy  HH:mm",
+            Locale.ENGLISH
+        ).format(
+            Date(updatedAtLong?.times(1000) ?: 0)
+        )
+        iconString = dataArray[2]
+        lat = dataArray[3]
+        lon = dataArray[4]
+        conditionsString = dataArray[5]
+        temperatureString = dataArray[6]
+        tempMinString = dataArray[7]
+        tempMaxString = dataArray[8]
+        windString = dataArray[9]
+        humidityString = dataArray[10]
+        pressureString = dataArray[11]
+        countryString = dataArray[12]
+
+        binding.apply {
+            cityName.text = getString(R.string.text_city, nameString, countryString)
+            updatedTime.text = getString(R.string.text_updated, updatedText)
+            conditions.text = getString(R.string.text_conditions, conditionsString)
+            temperature.text = getString(R.string.text_temp, temperatureString)
+            tempMin.text = getString(R.string.text_min_temp, tempMinString)
+            tempMax.text = getString(R.string.text_max_temp, tempMaxString)
+            windData.text = getString(R.string.text_wind, windString)
+            humidityData.text =
+                getString(R.string.text_humidity, "$humidityString %")
+            pressure.text = getString(R.string.text_pressure, pressureString)
+        }
+
+        // Image icon
+        Glide.with(requireContext())
+            .load("https://openweathermap.org/img/wn/$iconString@2x.png")
+            // http://openweathermap.org/img/wn/04d@2x.png
+            .into(binding.imageMain)
+
     }
 
     private fun getCity(): String {
@@ -234,3 +249,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 private fun Editable?.formatting(): String {
     return this.toString().trim().capitalize()
 }
+
+//private fun String?.formattingToLong(): Long? {
+//    return this?.toInt()?.toLong()
+//}

@@ -18,7 +18,7 @@ class SearchDatabaseWorker(val context: Context, params: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         return try {
-            delay(500L)
+            delay(1000L)
             val queryCity = inputData.getString(WeatherViewModel.QUERY_CITY)
             val dao = CurrentWeatherDatabase.createDatabase(applicationContext)
                 .getWeatherDao()
