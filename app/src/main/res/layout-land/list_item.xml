@@ -21,7 +21,8 @@
             android:textSize="@dimen/text_20"
             android:textStyle="bold|italic"
             android:text="@string/second_date"
-            tools:ignore="RtlSymmetry" />
+            tools:ignore="RtlSymmetry"
+            android:gravity="center"/>
         <Space
             android:layout_width="match_parent"
             android:layout_height="@dimen/space_10" />

@@ -5,7 +5,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/space_16"
+        android:paddingStart="@dimen/space_5"
+        android:paddingEnd="@dimen/space_5"
         tools:context=".FirstFragment">
         <LinearLayout
             android:id="@+id/main_container"
@@ -33,7 +34,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/text_city"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/text_30" />
+                        android:textSize="@dimen/text_25" />
                     <TextView
                         android:id="@+id/updated_time"
                         android:layout_width="wrap_content"
@@ -68,7 +69,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/text_temp"
-                        android:textSize="@dimen/text_32" />
+                        android:textSize="@dimen/text_25" />
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -99,12 +100,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/space_5">
+                    android:orientation="horizontal">
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:paddingBottom="@dimen/space_5">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_city"
                             android:layout_width="match_parent"
@@ -125,7 +126,7 @@
                     android:id="@+id/details_layout1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_5"
+                    android:layout_marginTop="@dimen/space_2"
                     android:orientation="horizontal"
                     android:weightSum="2">
                     <androidx.cardview.widget.CardView
@@ -169,8 +170,7 @@
                         android:layout_height="wrap_content"
                         app:cardBackgroundColor="@color/light_color"
                         app:cardCornerRadius="@dimen/space_10"
-                        android:layout_weight="1"
-                        android:padding="@dimen/space_5">
+                        android:layout_weight="1">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -203,7 +203,7 @@
                     android:id="@+id/details_layout2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_10"
+                    android:layout_marginTop="@dimen/space_2"
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:weightSum="2">
@@ -212,8 +212,7 @@
                         android:layout_height="wrap_content"
                         app:cardBackgroundColor="@color/light_color"
                         app:cardCornerRadius="@dimen/space_10"
-                        android:layout_weight="1"
-                        android:padding="@dimen/space_5">
+                        android:layout_weight="1">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
