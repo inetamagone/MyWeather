@@ -99,6 +99,11 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun getCity(): String {
         binding.editCity
             .apply {
@@ -112,12 +117,13 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             }
         return city
     }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }
-private fun setViews(context: Context, currentWeatherData: CurrentWeatherData, binding: FragmentFirstBinding) {
+
+private fun setViews(
+    context: Context,
+    currentWeatherData: CurrentWeatherData,
+    binding: FragmentFirstBinding
+) {
     val updatedAt = currentWeatherData.dt.toLong()
     val updatedText = SimpleDateFormat(
         "dd/MM/yyyy  HH:mm",
@@ -132,15 +138,28 @@ private fun setViews(context: Context, currentWeatherData: CurrentWeatherData, b
     lon = currentWeatherData.coord.lon.toString()
 
     binding.apply {
-        cityName.text = context.getString(R.string.text_city, currentWeatherData.name, currentWeatherData.sys.country)
+        cityName.text = context.getString(
+            R.string.text_city,
+            currentWeatherData.name,
+            currentWeatherData.sys.country
+        )
         updatedTime.text = context.getString(R.string.text_updated, updatedText)
-        conditions.text = context.getString(R.string.text_conditions, currentWeatherData.weather[0].description)
-        temperature.text = context.getString(R.string.text_temp, currentWeatherData.main.temp.toString())
-        tempMin.text = context.getString(R.string.text_min_temp, currentWeatherData.main.tempMin.toString())
-        tempMax.text = context.getString(R.string.text_max_temp, currentWeatherData.main.tempMax.toString())
-        windData.text = context.getString(R.string.text_wind, currentWeatherData.wind.speed.toString())
-        humidityData.text = context.getString(R.string.text_humidity, currentWeatherData.main.humidity.toString() + " %")
-        pressure.text = context.getString(R.string.text_pressure, currentWeatherData.main.pressure.toString())
+        conditions.text =
+            context.getString(R.string.text_conditions, currentWeatherData.weather[0].description)
+        temperature.text =
+            context.getString(R.string.text_temp, currentWeatherData.main.temp.toString())
+        tempMin.text =
+            context.getString(R.string.text_min_temp, currentWeatherData.main.tempMin.toString())
+        tempMax.text =
+            context.getString(R.string.text_max_temp, currentWeatherData.main.tempMax.toString())
+        windData.text =
+            context.getString(R.string.text_wind, currentWeatherData.wind.speed.toString())
+        humidityData.text = context.getString(
+            R.string.text_humidity,
+            currentWeatherData.main.humidity.toString() + " %"
+        )
+        pressure.text =
+            context.getString(R.string.text_pressure, currentWeatherData.main.pressure.toString())
     }
     // Image icon
     Glide.with(context)
